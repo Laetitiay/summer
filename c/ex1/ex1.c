@@ -3,106 +3,120 @@
 
 #define ALPHA 0.012299
 #define BETA (1 - ALPHA)
+long double xpos,ypos,x_velocity,y_velocity,time,step_size;
+long total_steps, show_steps;
 
+int main();
+int checkValidInputFile(FILE *pFILE);
+long double d1();
+long double d2();
+long double accelerateX();
+long double accelerateY();
+void inputFromFile(FILE *inputFile, FILE *outputFile);
+void inputFromUser(FILE *outputFile);
+void singleMove();
+void arenstorfRoute();
 
-long double xpos;
-long double ypos;
-long double xvelo;
-long double yvelo;
-long double time;
-long steps;
-long show_steps;
-long step_size;
 
 /**
- * String I'm gonna need later
- * Enter initial pos x:\n
- * Enter initial pos y:\n
- * Enter initial vel x:\n
- * Enter initial vel y:\n
- * Enter total time T:\n
- * Enter num of steps:\n
- * Enter num of steps to save:\n
+ *
+ * @return
  */
-
-/**
- * D_1
- */
-long double d1()
-{
-    return powl(
-            (powl((xpos + ALPHA), 2) + powl(ypos, 2)),
-            (1.5)
-        );
+long double d1() {
+    return powl(powl(xpos + ALPHA, 2) + powl(ypos, 2), (1.5));
 }
-
 /**
- * D_2
+ *
+ * @return
  */
-long double d2()
-{
-    return powl(
-            (powl((xpos - BETA), 2) + powl(ypos, 2)),
-            (1.5)
-        );
+long double d2() {
+    return powl(powl(xpos - BETA, 2) + powl(ypos, 2), (1.5));
 }
-
-
 /**
- * VELOCITY
- * a_x
+ *
+ * @return
  */
-long double ax()
-{
-    return (xpos + 2 * yvelo - BETA * (xpos + ALPHA) / d1() - ALPHA * (xpos - BETA) / d2());
+long double accelerateX() {
+    return xpos + (2 * y_velocity) - BETA * (xpos + ALPHA)/d1() - ALPHA * (xpos - BETA)/d2();
 }
-
 /**
- * VELOCITY
- * a_y
+ *
+ * @return
  */
-long double ay()
-{
-    return (ypos - 2 * xvelo - BETA * (ypos) / d1() - ALPHA * (ypos) / d2());
+long double accelerateY() {
+    return ypos - (2 * x_velocity) - BETA * (ypos)/d1() - ALPHA * (ypos)/d2();
 }
-
+long double next_xpos;
+long double next_ypos;
+long double next_x_velocity;
+long double next_y_velocity;
 /**
- * what's a single step of the road
+ *
  */
-void single_step()
-{
-    xpos = (xpos + xvelo * step_size);
-    ypos = (ypos + yvelo * step_size);
-    xvelo = ax();
-    yvelo = ay();
+void singleMove() {
+
+    next_xpos = xpos + x_velocity * step_size;
+    next_ypos = ypos + y_velocity * step_size;
+    next_x_velocity = x_velocity + accelerateX() * step_size;
+    next_y_velocity = y_velocity + accelerateY() * step_size;
+    xpos = next_xpos;
+    ypos = next_ypos;
+    x_velocity = next_x_velocity;
+    y_velocity = next_y_velocity;
+    return;
 }
-
 /**
- * preform multiple steps of the thing
+ *
  */
-void multiple_steps() 
-{
-    for (int i = 0; i < show_steps ;i++)
+void arenstorfRoute() {
+    for (int i = 0; i < total_steps; ++i)
     {
-        printf("%Lf , %Lf", xpos, ypos);
-        single_step();
-
+        singleMove();
+        if ( i % (total_steps / show_steps) == 0)
+        {
+            printf("%.3Le , %.3Le\n",xpos ,ypos);
+            // write location to file
+        }
     }
 }
-
-
-int main ()
-{
+int main(){
     xpos = 0.994;
     ypos = 0.0;
-    xvelo = 0.0;
-    yvelo = -2.00158510638;
+    x_velocity = 0.0;
+    y_velocity = -2.00158510638;
     time = 17.0652165602;
-    steps = 10;
+    total_steps = 10;
     show_steps = 10;
-    step_size = (time/steps);
-    multiple_steps();
-
-    return 0;
+    arenstorfRoute();
 }
+
+void inputFromFile(FILE *inputFile, FILE *outputFile) {
+    if (checkValidInputFile(inputFile))
+    {
+
+    }
+    else
+    {
+        // handle the exception
+    }
+
+}
+/**
+ *
+ * @param pFILE
+ * @return
+ */
+unsigned checkValidInputFile(FILE *pFILE) {
+    return 1;
+}
+
+/**
+ *
+ * @param outputFile
+ */
+void inputFromUser(FILE *outputFile) {
+
+}
+
+
 
