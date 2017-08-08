@@ -142,6 +142,7 @@ io_error processInput(input_state state, char *in)
         default:
             return err_invalid_input;
     }
+
     if(str)
     {
         return err_invalid_input;
@@ -158,7 +159,7 @@ io_error getFileInput(char *fileName)
 
     if(inputFile)
     {
-        for(int i = 1; i < INPUT_FILE_LINES_NUM ; i++)
+        for(int i = 0; i < INPUT_FILE_LINES_NUM ; i++)
         {
             fgets(data, MAX_CHARS_IN_LINE, inputFile);
             token = strtok(data, INPUT_DELIM);
@@ -189,29 +190,76 @@ io_error getFileInput(char *fileName)
     return err_invalid_input;
 }
 
+void printUserInputStateMessage(input_state state)
+{
+    char *message;
+    switch(state)
+    {
+        case(i_xpos):
+            message = "Enter initial pos x:\n";
+            break;
+        case(i_ypos):
+            message = "Enter initial pos y:\n";
+            break;
+        case(i_x_velocity):
+            message = "Enter initial vel x:\n";
+            break;
+        case(i_y_velocity):
+            message = "Enter initial vel y:\n";
+            break;
+        case(i_time):
+            message = "Enter total time T:\n";
+            break;
+        case(i_total_steps):
+            message = "Enter num of steps:\n";
+            break;
+        case(i_show_steps):
+            message = "Enter num of steps to save:\n";
+            break;
+        default:
+            return;
+    }
+    printf("%s", message);
+    return;
+}
+
+io_error getUserInput()
+{
+    char data[MAX_CHARS_IN_LINE];
+    for (input_state state = i_xpos; state < i_end ; state++)
+    {
+        printUserInputStateMessage(state);
+        fgets(data, MAX_CHARS_IN_LINE, stdin);
+        processInput(state, data);
+    }
+    return err_no_err;
+}
+
+unsigned checkForLogicalErrors()
+{
+    if(show_steps > total_steps)
+    {
+        //error
+    }
+}
 
 /**
  * main
  */
 int main(int argc, char *argv[])
 {
-    //xpos = 0.994;
-    //ypos = 0.0;
-    //x_velocity = 0.0;
-    //y_velocity = -2.00158510638;
-    //time = 17.0652165602;
-    //total_steps = 10;
-    //show_steps = 10;
     char *output_file;
-    printf("%d",argc);
     if(argc == ARG_NUM_FILE_INPUT)
     {
-        //TODO: handle error
-        getFileInput(argv[1]);
+        if(!getFileInput(argv[1]))
+        {
+
+        }
         output_file = argv[2];
     }
     else if (argc == ARG_NUM_STDIN)
     {
+        getUserInput();
         output_file = argv[1];
     }
     else
