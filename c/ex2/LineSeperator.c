@@ -37,6 +37,10 @@ unsigned testMult()
 }
  */
 
+struct Vectors calculateWhatever()
+{
+}
+
 
 int main(int argc, char *argv[])
 {
