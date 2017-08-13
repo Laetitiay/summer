@@ -4,11 +4,12 @@
 #include <memory.h>
 #define MAX_CHARS_IN_LINE 400
 
+//is_ stands for input_state_
 typedef enum INPUT_STATE
 {
     is_dim = 0,
     is_in_lines = 1,
-    is_examples = 2,
+    is_learning = 2,
     is_work = 3
 } input_state;
 
@@ -23,7 +24,9 @@ typedef struct Vectors {
     double *cords;
     int code;
 } vector;
+
 unsigned dim = 0;
+unsigned learningAmount = 0;
 
 vector W = NULL;
 
@@ -114,8 +117,10 @@ void processInputByState(input_state state, char *in)
     switch(state)
     {
         case(is_dim):
+            dim = strtol(in, str, 10);
            break;
         case(is_in_lines):
+            dim = strtol(in, str, 10);
             break;
         case(is_examples):
             break;
