@@ -2,36 +2,14 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <memory.h>
-#define MAX_CHARS_IN_LINE 400
-#define INPUT_DELIM ","
+#include "LineSeparator.h"
 
-//is_ stands for input_state_
-typedef enum INPUT_STATE
-{
-    is_dim = 0,
-    is_in_lines = 1,
-    is_learning = 2,
-    is_work = 3
-} input_state;
 
-typedef enum IO_ERRORS
-{
-    err_no_err = 0,
-    err_no_file = 1,
-    err_invalid_input = 2,
-} io_error;
-
-typedef struct Vectors {
-    double *cords;
-    int code;
-} vector;
-
-/* variables */
-unsigned dim = 0;
-unsigned learningAmount = 0;
-vector W;
-vector buffer_vector;
-
+/**
+ * Not really "sign". Returns 1 if d > 0, -1 otherwise.
+ * @param d number
+ * @return 1 if d > 0, -1 otherwise.
+ */
 int sign(double d)
 {
    if( d > 0)
@@ -41,163 +19,233 @@ int sign(double d)
    return -1;
 }
 
-int multiplyVectors(vector u, vector v)
+
+/**
+ * "Multiply" two vectors.
+ * @param u first vector
+ * @param v second vector
+ * @param dim dimension of the vectors
+ * @return the "sign" of the product
+ */
+int innerProduct(vector *u, vector *v, unsigned dim)
 {
-    double sum = 0;
     assert(dim > 0);
+    double sum = 0;
     for(unsigned i = 0; i < dim; ++i)
     {
-        sum += u.cords[i] * v.cords[i];
+        sum += u->cords[i] * v->cords[i];
     }
     return sign(sum);
 }
 
-vector multiplyVectorByScalar(vector x, int s)
+/**
+ * Multiply a vector by a scalar.
+ * @param x vector to multiply
+ * @param s scalar to multiply by
+ * @param dim dimension of the vector.
+ * @return pointer to the received vector
+ */
+vector *multiplyVectorByScalar(vector *x, int s, unsigned dim)
 {
     assert(dim != 0);
     for (unsigned i = 0; i < dim; ++i) {
-        x.cords[i] *= s;
+        x->cords[i] *= s;
     }
     return x;
 }
 
 /**
- * add the second vector to the first vector
- * @param u
- * @param v
+ * Add the second vector to the first vector.
+ * @param u vector to add to
+ * @param v vector to add
+ * @param dim dimenstion of the vectors
  */
-void addVectors(vector u, vector v)
+void addVectors(vector *u, vector *v, unsigned dim)
 {
     assert(dim != 0);
     for(unsigned i = 0; i < dim; ++i)
     {
-        u.cords[i] += v.cords[i];
+        u->cords[i] += v->cords[i];
     }
-}
-
-
-void closeWAndBuffer()
-{
-    free(W.cords);
-    free(buffer_vector.cords);
-}
-
-void initWAndBuffer()
-{
-    assert(dim != 0);
-    double *W_cords = malloc(sizeof(double) * dim);
-    memset(W_cords, 0, dim);
-    W.code = 1;
-    W.cords = W_cords;
-    double *buffer_cords = malloc(sizeof(double) * dim);
-    buffer_vector.cords = buffer_cords;
-    if(W_cords == NULL || buffer_cords == NULL)
-    {
-        closeWAndBuffer();
-        exit(1);
-    }
-    // TODO: free those mallocs
-    // TODO: malloc might fail.
 }
 
 
 /**
- *
- * @return
+ * frees the arrays of the two vectors we are using throught this program
+ * @param W calculating vector
+ * @param buffer_vector vector used to reading
  */
-vector updateW(vector x)
+void closeWAndBuffer(vector *W, vector *buffer_vector)
+{
+    free(W->cords);
+    free(buffer_vector->cords);
+}
+
+/**
+ * initializes the two vectors we are using throught this program
+ * @param W calculating vector
+ * @param buffer_vector vector used to reading
+ * @param dim dimension of the vectors
+ */
+io_error initWAndBuffer(vector *W, vector *buffer_vector, unsigned dim)
 {
     assert(dim != 0);
-    double y_tag = multiplyVectors(x,W);
+    //W
+    double *W_cords = malloc(sizeof(double) * dim);
+    double *buffer_cords = malloc(sizeof(double) * dim);
+    // maybe it failed?
+    if(W_cords == NULL || buffer_cords == NULL)
+    {
+        closeWAndBuffer(W, buffer_vector);
+        return err_sys_err;
+    }
+    // gonna zero them out.
+    // used memset before, but valgrind says uninitialized.
+    for(unsigned i = 0; i < dim; ++i)
+    {
+        buffer_cords[i] = 0;
+        W_cords[i] = 0;
+    }
+    W->cords = W_cords;
+    buffer_vector->cords = buffer_cords;
+    return err_no_err;
+}
 
-    if(y_tag != x.code)
+/**
+ * Updates the W vector according to the x vector
+ * @param W W vector
+ * @param x x vector
+ * @param dim dimeinsion of the vectors
+ */
+void updateW(vector *W, vector *x, unsigned dim)
+{
+    assert(dim != 0);
+    double y_tag = innerProduct(x,W, dim);
+
+    if(y_tag != x->code)
     {
         addVectors(
-                W, multiplyVectorByScalar(x, x.code)
+                W, multiplyVectorByScalar(x, x->code, dim), dim
         );
     }
 }
-vector updateBufferVector(char *data, input_state state)
+
+/**
+ * updates the buffer vector by a string
+ * @param data data to update vector with
+ * @param state current state of the program
+ * @param buffer_vector vector to update into
+ * @param dim dimension of the vector
+ */
+void updateBufferVector(char *data, input_state state,vector *buffer_vector, unsigned dim)
 {
     assert(dim != 0);
     char *token;
-
     unsigned i = 0;
+
+    // first char
     token = strtok(data, INPUT_DELIM);
-    buffer_vector.cords[i] = (double) strtold(token, NULL);
+    buffer_vector->cords[i] = (double) strtold(token, NULL);
     i++;
 
+    // rest of them
     for(;i < dim; i++)
     {
         token = strtok(NULL, INPUT_DELIM);
-        buffer_vector.cords[i] = (double) strtold(token, NULL);
+        buffer_vector->cords[i] = (double) strtold(token, NULL);
     }
+    // we have a code if we are learning
     if(state == is_learning)
     {
         token = strtok(NULL, INPUT_DELIM);
-        buffer_vector.code = (int) strtold(token, NULL);
+        buffer_vector->code = (int) strtold(token, NULL);
     }
 }
 
 
 
-void processInputByState(input_state state, char *in)
+/**
+ * Proceess input according to the state of the program.
+ * This used to include two other states when I used global variables.
+ * I learned that I'm not allowed to use thme so I had to change it a bit.
+ * @param state state of the program
+ * @param in input string
+ * @param W W vector
+ * @param buffer_vector buffer vector
+ * @param dim dimension the vectors are in
+ */
+void processInputByState(input_state state, char *in, vector *W, vector *buffer_vector, unsigned dim)
 {
     switch(state)
    {
-        case(is_dim):
-            dim = (unsigned int) strtol(in, NULL, 10);
-           initWAndBuffer();
-           break;
-        case(is_in_lines):
-            learningAmount = (unsigned int) strtol(in, NULL, 10);
-            break;
         case(is_learning):
-            updateBufferVector(in, state);
-            updateW(buffer_vector);
+            updateBufferVector(in, state, buffer_vector, dim);
+            updateW(W, buffer_vector, dim);
             break;
         case(is_work):
-            updateBufferVector(in, state);
-            printf("%d\n", multiplyVectors(W,buffer_vector));
+            updateBufferVector(in, state, buffer_vector, dim);
+            printf("%d\n", innerProduct(W,buffer_vector, dim));
             break;
-    }
+       default:
+           break;
+   }
 
 }
 
 /**
- * Reads the input from a file
+ * Reads the input from a file and process it
  * @param fileName file name to access for the input
+ * @param W the W vector
+ * @param buffer_vector buffer vector
  * @return error if could not process the file, 0 otherwise.
  */
-io_error getFileInput(char *fileName)
+io_error processFile(char *fileName, vector *W, vector *buffer_vector)
 {
     FILE *inputFile = fopen(fileName, "r");
-    char *token = NULL;
     char data[MAX_CHARS_IN_LINE];
     unsigned line_num = 0;
+    unsigned dim = 0;
+    unsigned learningAmount = 0;
     input_state state = is_dim;
-    char *x;
 
     if(!inputFile)
     {
         fclose(inputFile);
         return err_no_file;
     }
+
+    /* read fist line */
     if(!fgets(data, MAX_CHARS_IN_LINE, inputFile))
     {
         fclose(inputFile);
         return err_invalid_input;
     }
+
     do
     {
-        processInputByState(state, data);
+        if(state == is_dim) // used to be in processInputByState
+        {
+            dim = (unsigned int) strtol(data, NULL, NUMBERS_BASE);
+            if(initWAndBuffer(W, buffer_vector, dim))
+            {
+                break;
+            }
+        }
+        else if (state == is_in_lines) // used to be in processInputByState
+        {
+            learningAmount = (unsigned int) strtol(data, NULL, NUMBERS_BASE);
+        }
+        else
+        {
+            processInputByState(state, data, W, buffer_vector, dim);
+        }
         if(state < is_learning)
         {
             state++;
         }
-        else
+        else // >= is learning
         {
-            if(line_num - 1 == learningAmount)
+            if(line_num - 1 == learningAmount) // finished learning
             {
                 state++;
             }
@@ -211,11 +259,29 @@ io_error getFileInput(char *fileName)
     return err_no_err;
 }
 
+/**
+ * runs the program on a file
+ * @param fileName file for inpiut
+ * @return 0 if succeeded, other value otherwise.
+ */
+io_error runProgram(char *fileName)
+{
+
+/* variables */
+    vector W;
+    vector buffer_vector;
+
+    io_error err = processFile(fileName, &W, &buffer_vector);
+    closeWAndBuffer(&W, &buffer_vector);
+    return err;
+}
 
 int main(int argc, char *argv[])
 {
-    getFileInput(argv[1]);
-    closeWAndBuffer();
-    return 0;
+    if(argc < MINIMUM_ARGS)
+    {
+        return err_no_file;
+    }
+    return runProgram(argv[1]);
 
 }
