@@ -19,7 +19,7 @@ int getBoardVal(sudokuBoard);
 /*
  * TODO: fee double array
  */
-void freeBoard();
+void freeBoard(sudokuBoard);
 
 /*
  * copies a board
