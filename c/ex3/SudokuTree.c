@@ -147,7 +147,7 @@ char* possibleSudokuValues(sudokuBoard* sudoku, unsigned row, unsigned column)
 int getBoardChildren(pNode node, pNode** arr)
 {
     sudokuBoard* my_board = (sudokuBoard*)node;
-    sudokuBoard** children = malloc(sizeof(sudokuBoard*) * my_board->size ); // maximum children amount
+    sudokuBoard** children = malloc(sizeof(sudokuBoard) * my_board->size ); // maximum children amount
     point* board_point = malloc(sizeof(point));
     char* possibleValues;
     int number_of_childern = 0;
