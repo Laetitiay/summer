@@ -1,12 +1,12 @@
+/**
+ * sudoku tree
+ */
+
 // todo: telede
 #include <stdlib.h>
 #include <stdio.h>
 //tohere
 #include "SudokuTree.h"
-
-/**
- * sudoku tree
- */
 
 unsigned getBoardVal(pNode board)
 {
@@ -37,9 +37,9 @@ pNode copyBoard(pNode node)
     newSudoku->size = toCopy->size;
     newSudoku->value = toCopy->value;
     newSudoku->sizeroot = toCopy->sizeroot;
-    for(int i = 0 ; i < toCopy->size; ++i)
+    for(unsigned i = 0 ; i < toCopy->size; ++i)
     {
-        for(int j = 0; j < toCopy->size; ++j)
+        for(unsigned j = 0; j < toCopy->size; ++j)
         {
             newSudoku->board[i][j] = toCopy->board[i][j];
         }
@@ -81,12 +81,12 @@ sudokuFits checkRowAndColumn(sudokuBoard* sudoku, unsigned row, unsigned column,
 
 sudokuFits checkBox(sudokuBoard* sudoku, unsigned row, unsigned column, char number)
 {
-    int startRow = (row / sudoku->sizeroot) * sudoku->sizeroot;
-    int startCol = (column / sudoku->sizeroot) * sudoku->sizeroot;
+    unsigned startRow = (row / sudoku->sizeroot) * sudoku->sizeroot;
+    unsigned startCol = (column / sudoku->sizeroot) * sudoku->sizeroot;
 
-    for (int i = startRow; i < startRow + sudoku->sizeroot ; ++i)
+    for (unsigned i = startRow; i < startRow + sudoku->sizeroot ; ++i)
     {
-        for (int j = startCol; j < startCol + sudoku->sizeroot ; ++j)
+        for (unsigned j = startCol; j < startCol + sudoku->sizeroot ; ++j)
         {
             if(sudoku->board[i][j] == number)
             {
@@ -127,14 +127,14 @@ sudokuFits checkIfNumberFitsInBoard(sudokuBoard* sudoku, unsigned row, unsigned 
 char* possibleSudokuValues(sudokuBoard* sudoku, unsigned row, unsigned column)
 {
     assert(sudoku->size <= 100);
-    char* possibleValues = malloc(sizeof(char) * (sudoku->size + 1));
+    char* possibleValues = malloc(sizeof(char) * (sudoku->size));
     //todo: delete this
     //char possibleValues[100] = {0};
-    for(char i = 1; i <= sudoku->size ; ++i)
+    for(unsigned i = 0; i < sudoku->size ; ++i)
     {
-        if(checkIfNumberFitsInBoard(sudoku, row, column, i))
+        if(checkIfNumberFitsInBoard(sudoku, row, column, (char)(i + 1)))
         {
-            possibleValues[i] = i;
+            possibleValues[i] = (char) (i+1);
         }
         else
         {
@@ -147,7 +147,7 @@ char* possibleSudokuValues(sudokuBoard* sudoku, unsigned row, unsigned column)
 int getBoardChildren(pNode node, pNode** arr)
 {
     sudokuBoard* my_board = (sudokuBoard*)node;
-    sudokuBoard** children = malloc(sizeof(sudokuBoard) * my_board->size ); // maximum children amount
+    sudokuBoard** children = (sudokuBoard**)malloc(sizeof(sudokuBoard) * my_board->size ); // maximum children amount
     point* board_point = malloc(sizeof(point));
     char* possibleValues;
     int number_of_childern = 0;
@@ -158,7 +158,7 @@ int getBoardChildren(pNode node, pNode** arr)
     }
 
     possibleValues = possibleSudokuValues(my_board, board_point->row, board_point->column);
-    for (int i = 1; i <= my_board->size ; ++i)
+    for (unsigned i = 0; i < my_board->size ; ++i)
     {
         if (possibleValues[i] != 0)
         {

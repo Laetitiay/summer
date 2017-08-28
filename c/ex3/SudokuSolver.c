@@ -12,6 +12,7 @@
 #define SUDOKU_MAX_SIZE 100
 #define SUDOKU_MIN_SIZE 1
 
+#define MSG_INVALID_FILE "Invalid file."
 #define MSG_INVALID_ARGS_AMOUNT "Invalid amount of arguments."
 #define MSG_IO_ERROR "Could not open file."
 
@@ -88,7 +89,7 @@ int parseNumber(char* str, unsigned max_size)
     char* leftovers = NULL;
     long num = strtol(str, &leftovers, NUMBERS_BASE);
 
-    if (!leftovers)
+    if (*str == *leftovers)
     {
         return err_invalid_number;  // error
     }
@@ -142,6 +143,10 @@ io_error processFile(FILE* input)
                     value++;
                 }
             }
+            else
+            {
+                return err_invalid_file;
+            }
 
             token_buffer = strtok(NULL, SUDOKU_TABLE_DELIMETER);
         }
@@ -193,6 +198,10 @@ int main(int argc, char *argv[])
     }
 
     io_error err = processFile(input);
+    if(err == err_invalid_file)
+    {
+        printf("%s" , MSG_INVALID_FILE);
+    }
     fclose(input);
     return err;
 }
