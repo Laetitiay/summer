@@ -15,7 +15,7 @@
 #define MSG_INVALID_FILE "Invalid file."
 #define MSG_INVALID_ARGS_AMOUNT "Invalid amount of arguments."
 #define MSG_IO_ERROR "Could not open file."
-
+#define MSG_NO_SOLUTION "No solution."
 
 typedef enum IO_ERROR {
     err_invalid_number = -1,
@@ -23,20 +23,25 @@ typedef enum IO_ERROR {
     err_invalid_args_num = 1,
     err_io_error = 2,
     err_invalid_file = 3,
-    err_memory_error =4
+    err_memory_error = 4
 } io_error;
 
 
+/**
+ * Prints the board to stdou
+ * @param sudoku  sudokuBoard to print
+ */
 void printBoard(sudokuBoard* sudoku)
 {
-    for (int i = 0; i < sudoku->size ; ++i)
+    printf("%d\n", sudoku->size);
+    for (unsigned i = 0; i < sudoku->size ; ++i)
     {
-        for (int j = 0; j < sudoku->size; ++j)
+        for (unsigned j = 0; j < sudoku->size; ++j)
         {
             printf("%d" , sudoku->board[i][j]);
             if(j != sudoku->size - 1)
             {
-                printf(" ");
+                printf(SUDOKU_TABLE_DELIMETER);
             }
         }
         printf("\n");
@@ -68,17 +73,6 @@ unsigned int getSizeFromFile(FILE *const file)
     return 0;
 }
 
-sudokuBoard* getSudokuBoardFromFile(FILE* input, unsigned size)
-{
-    sudokuBoard* sudoku = malloc(sizeof(sudokuBoard));
-    if(sudoku == NULL) // malloc failed?
-    {
-        return NULL;
-    }
-
-    return sudoku;
-}
-
 int parseNumber(char* str, unsigned max_size)
 {
    if (str == NULL) // invalid input
@@ -102,39 +96,29 @@ int parseNumber(char* str, unsigned max_size)
     return err_invalid_number; // TODO: err
 }
 
-io_error processFile(FILE* input)
+/**
+ * Generates a sudoku board from a file and a size.
+ * @param input input file
+ * @param size size of the sudoku
+ * @return sudoku board with the values from the file. NULL if something went wrong.
+ */
+io_error getSudokuBoardFromFile(FILE* input, sudokuBoard* sudoku)
 {
-    unsigned sudoku_size = getSizeFromFile(input);
-    if(!sudoku_size)
-    {
-        return err_invalid_file;
-    }
-
-    sudokuBoard* sudoku = malloc(sizeof(sudoku));
-    if(sudoku == NULL)
-    {
-        return err_memory_error;
-    }
-    sudoku->size = sudoku_size;
-    sudoku->sizeroot = (unsigned)sqrtl(sudoku_size);
     unsigned value = 0;
-
-
     char line_buffer[TABLE_LINE_MAX_SIZE];
     char* token_buffer;
     int  number_buffer;
 
-    for (unsigned i = 0; i < sudoku_size; ++i) {
+    for (unsigned i = 0; i < sudoku->size; ++i) {
         if(!fgets(line_buffer, TABLE_LINE_MAX_SIZE, input))
         {
             return err_io_error;
         }
 
         token_buffer = strtok(line_buffer, SUDOKU_TABLE_DELIMETER);
-        for (int j = 0; j < sudoku_size; ++j)
+        for (int j = 0; j < sudoku->size; ++j)
         {
-            number_buffer = parseNumber(token_buffer, sudoku_size);
-            // TODO: error
+            number_buffer = parseNumber(token_buffer, sudoku->size);
             if(number_buffer != err_invalid_number)
             {
                 sudoku->board[i][j] = (char)number_buffer;
@@ -163,15 +147,39 @@ io_error processFile(FILE* input)
     }
 
     sudoku->value = value;
+    return err_no_err;
+}
 
-    //printBoard(sudoku);
-
-    sudokuBoard* solution = getBest(sudoku, getBoardChildren, getBoardVal, freeBoard, copyBoard,
-                                    (sudoku_size * sudoku_size));
-
-    if(solution == NULL)
+io_error processFile(FILE* input)
+{
+    unsigned sudoku_size = getSizeFromFile(input);
+    unsigned sizeroot = (unsigned)sqrtl(sudoku_size);
+    if(!sudoku_size || (sizeroot) * (sizeroot) != sudoku_size)
     {
-        printf("No solution");
+        return err_invalid_file;
+    }
+
+    sudokuBoard* sudoku = malloc(sizeof(sudoku));
+    if(sudoku == NULL)
+    {
+        return err_memory_error;
+    }
+    sudoku->size = sudoku_size;
+    sudoku->sizeroot = sizeroot;
+
+    io_error board_generating_err = getSudokuBoardFromFile(input, sudoku);
+    if (board_generating_err)
+    {
+        return board_generating_err;
+    }
+
+    unsigned best_value = (sudoku_size * sudoku_size);
+    sudokuBoard* solution = getBest(sudoku, getBoardChildren, getBoardVal, freeBoard, copyBoard,
+                                    best_value);
+
+    if(solution == NULL || solution->value != best_value)
+    {
+        printf(MSG_NO_SOLUTION);
     }
     else
     {
@@ -181,6 +189,12 @@ io_error processFile(FILE* input)
     return err_no_err;
 }
 
+/**
+ * main method for sudoku solver
+ * @param argc
+ * @param argv
+ * @return
+ */
 int main(int argc, char *argv[])
 {
     if(argc != EXPECTED_ARGS_NUM)
@@ -202,6 +216,7 @@ int main(int argc, char *argv[])
     {
         printf("%s" , MSG_INVALID_FILE);
     }
+
     fclose(input);
     return err;
 }
