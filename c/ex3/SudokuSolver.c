@@ -130,7 +130,7 @@ io_error getSudokuBoardFromFile(FILE* input, sudokuBoard* sudoku)
         }
 
         token_buffer = strtok(line_buffer, SUDOKU_TABLE_DELIMETER);
-        for (int j = 0; j < sudoku->size; ++j)
+        for (unsigned j = 0; j < sudoku->size; ++j)
         {
             number_buffer = parseNumber(token_buffer, sudoku->size);
             if(number_buffer != err_invalid_number)
