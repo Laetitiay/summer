@@ -12,6 +12,7 @@ pNode getBest(pNode head, getNodeChildrenFunc getChildren, \
         return NULL;
     }
 
+    //todo: recover to best
     if(getVal(head) == best)
     {
         return head;
@@ -54,7 +55,10 @@ pNode getBest(pNode head, getNodeChildrenFunc getChildren, \
     // free rest of children if broke mid-way
     for (; i < num_of_childs ; ++i)
     {
+        //if(childs[i] != bestNode)
+        //{
         freeNode(childs[i]);
+        //}
     }
     free(childs);
 

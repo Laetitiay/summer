@@ -3,14 +3,19 @@
 
 #include "GenericDFS.h"
 #include <stdlib.h>
+#include <assert.h>
 
 typedef struct SudokuBoards{
-    short size;
+    unsigned size;
     unsigned value;
-    short sizeroot;
+    unsigned sizeroot;
     char board[100][100];
 } sudokuBoard ;
 
+typedef struct Point {
+    unsigned row;
+    unsigned column;
+} point;
 typedef enum {
     does_not_fit = 0,
     fits = 1
@@ -26,7 +31,7 @@ int getBoardChildren(pNode node,pNode** array);
  * TODO: How many empty places are there
  * n^2 - number of zeros
  */
-int getBoardVal(pNode board);
+unsigned int getBoardVal(pNode board);
 
 
 /*
