@@ -1,11 +1,11 @@
 #include "GenericDFS.h"
 #include <stdlib.h>
 
-/*
- * implement with DFS
+/**
+ * Documentation in header file
  */
-pNode getBest(pNode head, getNodeChildrenFunc getChildren, \
-             getNodeValFunc getVal, freeNodeFunc freeNode, copyNodeFunc copy, unsigned int best)
+pNode getBest(pNode head, getNodeChildrenFunc getChildren,
+              getNodeValFunc getVal, freeNodeFunc freeNode, copyNodeFunc copy, unsigned int best)
 {
     if(head == NULL)
     {
@@ -55,21 +55,9 @@ pNode getBest(pNode head, getNodeChildrenFunc getChildren, \
     // free rest of children if broke mid-way
     for (; i < num_of_childs ; ++i)
     {
-        //if(childs[i] != bestNode)
-        //{
         freeNode(childs[i]);
-        //}
     }
     free(childs);
-
-    //if (getVal(head) > best_p_node_val)
-    //{
-    //    if(bestNode)
-    //    {
-    //        freeNode(bestNode);
-    //    }
-    //    bestNode = head;
-    //}
 
     return bestNode;
 }

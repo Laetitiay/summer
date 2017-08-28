@@ -15,6 +15,10 @@ unsigned getBoardVal(pNode board)
 }
 
 
+/**
+ * frees the node memory
+ * @param node node to ree
+ */
 void freeBoard(pNode node)
 {
     sudokuBoard* sudoku_board = (sudokuBoard*)node;
@@ -23,10 +27,14 @@ void freeBoard(pNode node)
         return;
     }
 
-    //free(sudoku_board->board);
     free(sudoku_board);
 }
 
+/**
+ * copies the board
+ * @param node board to copy
+ * @return copy of the board
+ */
 pNode copyBoard(pNode node)
 {
     sudokuBoard* toCopy = (sudokuBoard*)node;
@@ -50,6 +58,12 @@ pNode copyBoard(pNode node)
     return newSudoku;
 }
 
+/**
+ * finds the nearest zero
+ * @param sudoku sudoku to find it in
+ * @param board_point point to put the values in
+ * @return if it found zero or not
+ */
 sudokuFits findNearestZero(const sudokuBoard* const sudoku, point *board_point)
 {
     for (unsigned i = 0; i < sudoku->size ; ++i)
@@ -67,7 +81,14 @@ sudokuFits findNearestZero(const sudokuBoard* const sudoku, point *board_point)
     return does_not_fit;
 }
 
-/** my functions **/
+/**
+ * Checks if a number fits the row and column
+ * @param sudoku soduku to check in
+ * @param row row to check in
+ * @param column column to check in
+ * @param number  number to check if valid
+ * @return if it fits or not
+ */
 sudokuFits checkRowAndColumn(sudokuBoard* sudoku, unsigned row, unsigned column, char number)
 {
     for(unsigned i = 0; i < sudoku->size ; ++i)
@@ -81,6 +102,15 @@ sudokuFits checkRowAndColumn(sudokuBoard* sudoku, unsigned row, unsigned column,
     return fits;
 }
 
+
+/**
+ * Checks if a number fits in the box (square)
+ * @param sudoku soduku to check in
+ * @param row row to check in
+ * @param column column to check in
+ * @param number  number to check if valid
+ * @return if it fits or not
+ */
 sudokuFits checkBox(sudokuBoard* sudoku, unsigned row, unsigned column, char number)
 {
     unsigned startRow = (row / sudoku->sizeroot) * sudoku->sizeroot;
@@ -100,6 +130,14 @@ sudokuFits checkBox(sudokuBoard* sudoku, unsigned row, unsigned column, char num
 }
 
 
+/**
+ * Checks if a number fits in the spot
+ * @param sudoku soduku to check in
+ * @param row row to check in
+ * @param column column to check in
+ * @param number  number to check if valid
+ * @return if it fits or not
+ */
 sudokuFits checkIfNumberFitsInBoard(sudokuBoard* sudoku, unsigned row, unsigned column, char number)
 {
     if(checkRowAndColumn(sudoku, row, column, number) == does_not_fit)
@@ -109,6 +147,13 @@ sudokuFits checkIfNumberFitsInBoard(sudokuBoard* sudoku, unsigned row, unsigned 
     return checkBox(sudoku, row, column, number);
 }
 
+/**
+ * generates the possible values to be in a spot
+ * @param sudoku sudoku to check in
+ * @param row row to check in
+ * @param column column to check in
+ * @return array of values viable to put in this spot
+ */
 char* possibleSudokuValues(sudokuBoard* sudoku, unsigned row, unsigned column)
 {
     assert(sudoku->size <= 100);
@@ -121,7 +166,7 @@ char* possibleSudokuValues(sudokuBoard* sudoku, unsigned row, unsigned column)
     {
         if(checkIfNumberFitsInBoard(sudoku, row, column, (char)(i + 1)))
         {
-            possibleValues[i] = (char) (i+1);
+            possibleValues[i] = (char) (i + 1);
         }
         else
         {
@@ -131,6 +176,12 @@ char* possibleSudokuValues(sudokuBoard* sudoku, unsigned row, unsigned column)
     return possibleValues;
 }
 
+/**
+ * generates the children of the board
+ * @param node board to make children of
+ * @param arr array to put the children in
+ * @return number of children
+ */
 int getBoardChildren(pNode node, pNode** arr)
 {
     sudokuBoard* my_board = (sudokuBoard*)node;

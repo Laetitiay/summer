@@ -1,3 +1,6 @@
+/**
+ * Solves sudoku.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
@@ -17,7 +20,11 @@
 #define MSG_IO_ERROR "Could not open file."
 #define MSG_NO_SOLUTION "No solution."
 
-typedef enum IO_ERROR {
+/**
+ * errors for the input
+ */
+typedef enum IO_ERROR
+{
     err_invalid_number = -1,
     err_no_err = 0,
     err_invalid_args_num = 1,
@@ -73,6 +80,12 @@ unsigned int getSizeFromFile(FILE *const file)
     return 0;
 }
 
+/**
+ * Parses a string to a number
+ * @param str  string to parse
+ * @param max_size  maximum valid number
+ * @return number if is good -1 if not.
+ */
 int parseNumber(char* str, unsigned max_size)
 {
    if (str == NULL) // invalid input
@@ -109,7 +122,8 @@ io_error getSudokuBoardFromFile(FILE* input, sudokuBoard* sudoku)
     char* token_buffer;
     int  number_buffer;
 
-    for (unsigned i = 0; i < sudoku->size; ++i) {
+    for (unsigned i = 0; i < sudoku->size; ++i)
+    {
         if(!fgets(line_buffer, TABLE_LINE_MAX_SIZE, input))
         {
             return err_io_error;
@@ -150,6 +164,11 @@ io_error getSudokuBoardFromFile(FILE* input, sudokuBoard* sudoku)
     return err_no_err;
 }
 
+/**
+ * Processes the input file
+ * @param input file to process
+ * @return input errors
+ */
 io_error processFile(FILE* input)
 {
     unsigned sudoku_size = getSizeFromFile(input);
@@ -159,17 +178,19 @@ io_error processFile(FILE* input)
         return err_invalid_file;
     }
 
-    sudokuBoard* sudoku = malloc(sizeof(sudoku));
+    sudokuBoard* sudoku = (sudokuBoard*)malloc(sizeof(sudoku));
     if(sudoku == NULL)
     {
         return err_memory_error;
     }
+
     sudoku->size = sudoku_size;
     sudoku->sizeroot = sizeroot;
 
     io_error board_generating_err = getSudokuBoardFromFile(input, sudoku);
     if (board_generating_err)
     {
+        free(sudoku);
         return board_generating_err;
     }
 
@@ -186,14 +207,16 @@ io_error processFile(FILE* input)
         printBoard(solution);
     }
 
+    free(sudoku);
+    free(solution);
     return err_no_err;
 }
 
 /**
  * main method for sudoku solver
- * @param argc
- * @param argv
- * @return
+ * @param argc argument count should be 2
+ * @param argv second arg should be file of sudoku
+ * @return input errors
  */
 int main(int argc, char *argv[])
 {
