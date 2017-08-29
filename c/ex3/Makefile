@@ -1,6 +1,6 @@
 CC=gcc
 LDLIBS=-lm -lGenericDFS
-CFLAGS= -Wextra -Wall -Wvla -std=c99 
+CFLAGS= -Wextra -g -Wall -Wvla -std=c99 
 
 all: SudokuSolver libGenericDFS.a
 
@@ -16,5 +16,7 @@ SudokuTree.o: SudokuTree.c SudokuTree.h
 SudokuSolver.o: SudokuSolver.c
 	$(CC) $(CFLAGS) -c SudokuSolver.c
 
+Valgrind: SudokuSolver
+	valgrind --leak-check=full --show-possibly-lost=yes --show-reachable=yes --undef-value-errors=yes SudokuSolver tests_cases/s2
 clean:
 	rm -f *.o *.a

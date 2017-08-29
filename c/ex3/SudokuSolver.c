@@ -138,7 +138,14 @@ io_error getSudokuBoardFromFile(FILE* input, sudokuBoard* sudoku)
                 sudoku->board[i][j] = (char)number_buffer;
                 if(number_buffer != 0)
                 {
-                    value++;
+                    if(!checkIfNumberFitsInBoard(sudoku, i, j, (char)number_buffer))
+                    {
+                        value++;
+                    }
+                    else
+                    {
+                        return err_invalid_file;
+                    }
                 }
             }
             else

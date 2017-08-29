@@ -20,7 +20,11 @@ typedef enum IO_ERRORS
     err_sys_err = 3
 } io_error;
 
-typedef struct Vectors {
+/**
+ * A vector in space
+ */
+typedef struct Vectors 
+{
     double *cords;
     int code;
 } vector;

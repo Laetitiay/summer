@@ -65,4 +65,13 @@ void freeBoard(pNode node);
  */
 pNode copyBoard(pNode node);
 
+/**
+ * Checks if a number fits in the spot
+ * @param sudoku soduku to check in
+ * @param row row to check in
+ * @param column column to check in
+ * @param number  number to check if valid
+ * @return if it fits or not
+ */
+sudokuFits checkIfNumberFitsInBoard(sudokuBoard* sudoku, unsigned row, unsigned column, char number);
 #endif

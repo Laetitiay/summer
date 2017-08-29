@@ -48,7 +48,8 @@ int innerProduct(vector *u, vector *v, unsigned dim)
 vector *multiplyVectorByScalar(vector *x, int s, unsigned dim)
 {
     assert(dim != 0);
-    for (unsigned i = 0; i < dim; ++i) {
+    for (unsigned i = 0; i < dim; ++i) 
+    {
         x->cords[i] *= s;
     }
     return x;
@@ -120,7 +121,7 @@ io_error initWAndBuffer(vector *W, vector *buffer_vector, unsigned dim)
 void updateW(vector *W, vector *x, unsigned dim)
 {
     assert(dim != 0);
-    double y_tag = innerProduct(x,W, dim);
+    double y_tag = innerProduct(x, W, dim);
 
     if(y_tag != x->code)
     {
@@ -137,7 +138,7 @@ void updateW(vector *W, vector *x, unsigned dim)
  * @param buffer_vector vector to update into
  * @param dim dimension of the vector
  */
-void updateBufferVector(char *data, input_state state,vector *buffer_vector, unsigned dim)
+void updateBufferVector(char *data, input_state state, vector *buffer_vector, unsigned dim)
 {
     assert(dim != 0);
     char *token;
@@ -149,7 +150,7 @@ void updateBufferVector(char *data, input_state state,vector *buffer_vector, uns
     i++;
 
     // rest of them
-    for(;i < dim; i++)
+    for(; i < dim; i++)
     {
         token = strtok(NULL, INPUT_DELIM);
         buffer_vector->cords[i] = (double) strtold(token, NULL);
@@ -184,7 +185,7 @@ void processInputByState(input_state state, char *in, vector *W, vector *buffer_
             break;
         case(is_work):
             updateBufferVector(in, state, buffer_vector, dim);
-            printf("%d\n", innerProduct(W,buffer_vector, dim));
+            printf("%d\n", innerProduct(W, buffer_vector, dim));
             break;
        default:
            break;
@@ -276,6 +277,9 @@ io_error runProgram(char *fileName)
     return err;
 }
 
+/**
+ * MAIN
+ */
 int main(int argc, char *argv[])
 {
     if(argc < MINIMUM_ARGS)

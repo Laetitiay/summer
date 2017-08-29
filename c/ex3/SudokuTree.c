@@ -91,6 +91,11 @@ sudokuFits findNearestZero(const sudokuBoard* const sudoku, point *board_point)
  */
 sudokuFits checkRowAndColumn(sudokuBoard* sudoku, unsigned row, unsigned column, char number)
 {
+    if(row >= sudoku->size || column >= sudoku->size)
+    {
+        return does_not_fit;
+    }
+
     for(unsigned i = 0; i < sudoku->size ; ++i)
     {
         if(sudoku->board[i][column] == number || sudoku->board[row][i] == number)
