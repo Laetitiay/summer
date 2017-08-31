@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <iostream>
 #include "Point.h"
 
 // constructor of point
@@ -14,6 +13,13 @@ void Point::set(long x, long y)
     _y = y;
 }
 
+long Point::getX()const{
+    return _x;
+}
+
+long Point::getY()const {
+    return _y;
+}
 
 std::string Point::toString()const
 {
@@ -25,14 +31,24 @@ bool Point::operator==(const Point &rhs)const
     return _x == rhs._x && _y == rhs._y;
 }
 
-//int main(){
-//    int c[] = {543,34,2,3,5};
-//    for (auto i : c){
-//        std::cout << i << ", ";
-//    }
-//    std::cout << std::endl;
-//    std::sort(std::begin(c), std::end(c));
-//    for (auto i : c){
-//        std::cout << i << ", ";
-//    }
-//}
+bool Point::operator!=(const Point &rhs) const {
+    return !(operator==(rhs));
+}
+
+bool Point::operator<(const Point &rhs) const {
+
+}
+
+
+bool Point::naturalCompare(Point &lhs, Point &rhs)
+{
+    if(lhs._x < rhs._x)
+    {
+        return true;
+    }
+    if(lhs._x > rhs._x)
+    {
+        return false;
+    }
+    return lhs._y < rhs._y;
+}
