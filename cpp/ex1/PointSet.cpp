@@ -188,25 +188,3 @@ void PointSet::increaseArraySize()
 }
 
 
-//int main()
-//{
-//    // testing
-//    Point p1{17,2};
-//    Point p2{4,2};
-//    Point p3{5,3};
-//    Point p4{17,4};
-//    Point p5{4,1};
-//    PointSet a{};
-//    a.add(p4);
-//    a.add(p1);
-//    a.add(p2);
-//    a.add(p3);
-//    a.add(p5);
-//    PointSet b{};
-//    b.add(p1);
-//    b.add(p2);
-//    b.add(p3);
-//    PointSet c = a;
-//    a.remove(p4);
-//    std::cout << c.toString();
-//}
