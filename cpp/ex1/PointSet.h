@@ -24,7 +24,7 @@ public:
     bool operator!=(PointSet &rhs);
     PointSet &operator&(const PointSet &rhs);
     PointSet operator=(const PointSet &rhs);
-    PointSet & operator-(PointSet &set);
+    PointSet & operator-(const PointSet &set);
     Point *toArrayWithPadding(int padding);
 
 private:

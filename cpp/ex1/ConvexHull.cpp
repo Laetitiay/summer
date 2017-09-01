@@ -5,7 +5,7 @@
 #include "PointSet.h"
 
 static Point minPoint;
-PointSet& getInput()
+PointSet* getInput()
 {
     PointSet *ps = new PointSet{};
     long x,y;
@@ -14,7 +14,7 @@ PointSet& getInput()
     {
         ps->add(Point{x,y});
     }
-    return *ps;
+    return ps;
 }
 
 void swapPoints(Point *a, Point *b)
@@ -99,13 +99,22 @@ PointSet* createConvexHull(PointSet& set)
     for (int j = 0; j <= m ; ++j) {
         ret->add(points[j]);
     }
+    delete[] points;
     return ret;
 }
 
 int main()
 {
-    PointSet set = getInput();
-    PointSet* convex = createConvexHull(set);
-    std::cout << convex->toString();
-    // TODO: every "new" should have "delete".
+    PointSet* set = getInput();
+    if (set->size() > 0)
+    {
+        PointSet* convex = createConvexHull(*set);
+        std::cout << convex->toString();
+        delete convex;
+    }
+    else
+    {
+        std::cout << "No input" << std::endl;
+    }
+    delete set;
 }

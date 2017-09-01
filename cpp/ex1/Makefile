@@ -1,25 +1,30 @@
 CC=g++
 LDLIBS=-lm
-CFLAGS= -Wextra -g -Wall -Wvla -std=cpp17 
+CFLAGS= -Wextra -Wall -Wvla -pthread -g -std=c++17 
+TARFLAGS= -cvf
+#TARARGS=README Makefile Point.h Point.cpp PointSet.h PointSet.cpp ConvexHull.cpp PointSetBinaryOperations.cpp
 
-all: SudokuSolver libGenericDFS.a
+all: ConvexHull PointSetBinaryOperations
+	./PointSetBinaryOperations
 
-tar: README Point.h Point.cpp PointSet.h PointSet.cpp ConvexHull.cpp PointSetBinaryOperations.cpp
-	tar -cvf ex1.tar Point.h Point.cpp PointSet.h PointSet.cpp ConvexHull.cpp PointSetBinaryOperations.cpp
+tar: README Makefile Point.h Point.cpp PointSet.h PointSet.cpp ConvexHull.cpp PointSetBinaryOperations.cpp
+	tar $(TARFLAGS) ex1.tar README Makefile Point.h Point.cpp PointSet.h PointSet.cpp ConvexHull.cpp PointSetBinaryOperations.cpp
 
-SudokuSolver: SudokuTree.o libGenericDFS.a  SudokuSolver.o
-	$(CC) SudokuSolver.o SudokuTree.o -o SudokuSolver -L. $(LDLIBS)
+PointSet.o: PointSet.h PointSet.cpp
+	$(CC) $(CFLAGS) -c PointSet.cpp
 
-libGenericDFS.a: GenericDFS.o
-	ar -rcs libGenericDFS.a GenericDFS.o
+Point.o: Point.h Point.cpp
+	$(CC) $(CFLAGS) -c Point.cpp
 
-SudokuTree.o: SudokuTree.c SudokuTree.h
-	$(CC) $(CFLAGS) -c SudokuTree.c
+PointSetBinaryOperations: PointSetBinaryOperations.cpp
+	$(CC) $(cflags) PointSetBinaryOperations.cpp -o PointSetBinaryOperations
 
-SudokuSolver.o: SudokuSolver.c
-	$(CC) $(CFLAGS) -c SudokuSolver.c
+ConvexHull: Point.o PointSet.o ConvexHull.cpp
+	$(CC) $(cflags) Point.o PointSet.o ConvexHull.cpp -o ConvexHull
 
-Valgrind: SudokuSolver
-	valgrind --leak-check=full --show-possibly-lost=yes --show-reachable=yes --undef-value-errors=yes SudokuSolver tests_cases/s2
+valgrind: ConvexHull
+	valgrind --leak-check=full --show-possibly-lost=yes --show-reachable=yes --undef-value-errors=yes ConvexHull
+
+# should it remove tar, and exec too?
 clean:
 	rm -f *.o *.a
