@@ -121,35 +121,35 @@ bool PointSet::operator!=(PointSet &rhs)
     return !(operator==(rhs));
 }
 
-PointSet PointSet::operator-(PointSet &rhs)
+PointSet& PointSet::operator-(PointSet &rhs)
 {
     //TODO: IMPROVE THIS - if not, make const.
-    PointSet ret{};
+    PointSet* ret = new PointSet{};
 //    std::sort(values, values + array_size, Point::naturalCompare);
 //    std::sort(rhs.values, rhs.values + array_size, Point::naturalCompare);
     for (int i = 0; i < array_size; ++i)
     {
         if(rhs.member(values[i]) == NOT_FOUND)
         {
-            ret.add(values[i]); // TODO: does it create a copy:
+            ret->add(values[i]); // TODO: does it create a copy:
         }
     }
-    return ret;
+    return *ret;
 }
 
-PointSet PointSet::operator&(const PointSet &rhs) {
+PointSet& PointSet::operator&(const PointSet &rhs) {
     //TODO: IMPROVE THIS
-    PointSet ret{};
+    PointSet* ret = new PointSet{};
 //    std::sort(values, values + array_size, Point::naturalCompare);
 //    std::sort(rhs.values, rhs.values + array_size, Point::naturalCompare);
     for (int i = 0; i < array_size; ++i)
     {
         if(rhs.member(values[i]) != NOT_FOUND)
         {
-            ret.add(values[i]); // TODO: does it create a copy:
+            ret->add(values[i]); // TODO: does it create a copy:
         }
     }
-    return ret;
+    return *ret;
 }
 
 PointSet PointSet::operator=(const PointSet &rhs) {
@@ -167,10 +167,13 @@ std::string PointSet::toString() const {
     return ret;
 }
 
-Point* PointSet::toArray(int padding = 1)
+Point* PointSet::toArrayWithPadding(int padding = 1)
 {
     Point *retArray = new Point[array_size + padding];
-    std::copy(values, values + capacity, retArray + padding);
+    //std::copy(values, values + capacity, retArray + padding);
+    for (int i = 1; i <= array_size; ++i) {
+        retArray[i] = values[i -1];
+    }
     return retArray;
 }
 

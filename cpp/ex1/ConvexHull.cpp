@@ -1,7 +1,10 @@
 #include <iostream>
+#include <math.h>
+#include <algorithm>
 #include "Point.h"
 #include "PointSet.h"
 
+static Point minPoint;
 PointSet& getInput()
 {
     PointSet *ps = new PointSet{};
@@ -14,9 +17,24 @@ PointSet& getInput()
     return *ps;
 }
 
-Point findMin(PointSet& set)
+Point* findMin(Point* arr, int size)
 {
-    // TODO
+    Point* min = &arr[1];
+    for (int i = 2; i <= size; ++i)
+    {
+        if(arr[i].getY() < min->getY())
+        {
+            //TODO: remove notes
+            min = &arr[i];
+            //min->set(arr[i].getX(),arr[i].getY());
+        }
+        else if (arr[i].getY() == min->getY() && arr[i].getX() < min->getX())
+        {
+            min = &arr[i];
+            //min->set(arr[i].getX(),arr[i].getY());
+        }
+    }
+    return min;
 }
 
 long ccw(Point &p1, Point &p2, Point &p3)
@@ -24,19 +42,39 @@ long ccw(Point &p1, Point &p2, Point &p3)
     return (p2.getX() - p1.getX()) * (p3.getY() - p1.getY()) - (p2.getY() - p1.getY()) * (p3.getX() - p1.getX());
 }
 
-bool
+void swapPoints(Point *a, Point *b)
+{
+    Point c = *a;
+    *a = *b;
+    *b = c;
+}
 
-PointSet& createConvexHull(PointSet& set)
+double angle(Point &p)
+{
+    long deltaX = minPoint->getX() - p.getX();
+    long deltaY = minPoint->getY() - p.getY();
+    //return atan(deltaY/deltaX);
+    return atan2(deltaY, deltaX);
+}
+
+bool angleCompare(Point &p1, Point &p2)
+{
+    return angle(p1) < angle(p2);
+}
+
+PointSet* createConvexHull(PointSet& set)
 {
 
-    Point arr = set.toArray();
-    Point min = findMin(set);
-    swap(Point[1], min);
-    // TODO CREATE ARRAY AND SORT BY MIN ANGLE.
-    // CAN ADD angle && distance to points
-
+    Point* points = set.toArrayWithPadding(1);
+    minPoint = findMin(points, set.size());
+    swapPoints(&points[1], minPoint);
+    if(set.size() > 2)
+    {
+        std::sort(points + 2, points + set.size() + 1, angleCompare);
+    }
+    points[0] = points[set.size()];
     int m = 1;
-    for (int i = 2 ; i < size ; ++i)
+    for (int i = 2 ; i <= set.size() ; ++i)
     {
         while(ccw (points[m-1], points[m], points[i]) <= 0)
         {
@@ -45,22 +83,34 @@ PointSet& createConvexHull(PointSet& set)
                 m-= 1;
                 continue;
             }
-            if (i == size)
+            else if (i == set.size())
             {
                 break;
             }
-            i+=1;
-
+            else
+            {
+                i+=1;
+            }
         }
         m += 1;
-        swap(points[m] , points[i]);
+        swapPoints(&points[m] , &points[i]);
     }
+    PointSet* ret = new PointSet;
+    for (int j = 0; j <= m ; ++j) {
+    //    std::cout << (points[j].toString());
+        ret->add(points[j]);
+    }
+    return ret;
+    //return *new PointSet{};
 
 }
 
 int main()
 {
     PointSet set = getInput();
-    std::cout << set.toString();
+    //std::cout << set.toString();
+    PointSet* convex = createConvexHull(set);
+    //createConvexHull(set);
+    std::cout << convex->toString();
     // TODO: every "new" should have "delete".
 }

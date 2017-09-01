@@ -22,9 +22,10 @@ public:
     int member(const Point &p)const;
     bool operator==(PointSet &rhs);
     bool operator!=(PointSet &rhs);
-    PointSet operator&(const PointSet &set);
+    PointSet &operator&(const PointSet &rhs);
     PointSet operator=(const PointSet &rhs);
-    PointSet operator-(PointSet &set);
+    PointSet & operator-(PointSet &set);
+    Point *toArrayWithPadding(int padding);
 
 private:
     Point *values;
