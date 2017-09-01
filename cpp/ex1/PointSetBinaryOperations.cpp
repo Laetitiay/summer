@@ -1,8 +1,13 @@
 #include <iostream>
 #include "PointSet.h"
+#include "Point.h"
 
+/**
+ * Shows off " != "
+ */
 void showOffNotEqual()
 {
+    std::cout << "Demonstrating \"a != b\"" << std::endl;
     Point p1{1,1};
     Point p2{2,2};
     Point p3{3,3};
@@ -26,11 +31,14 @@ void showOffNotEqual()
         msg = "false!\n";
     }
     std::cout << msg << std::endl;
-
 }
 
+/**
+ * Shows off " == "
+ */
 void showOffEqual()
 {
+    std::cout << "Demonstrating \"a == b\"" << std::endl;
     Point p1{1,1};
     Point p2{2,2};
     Point p3{3,3};
@@ -57,8 +65,12 @@ void showOffEqual()
     std::cout << msg << std::endl;
 }
 
+/**
+ * Shows off " - "
+ */
 void showOffMinus()
 {
+    std::cout << "Demonstrating \"a - b\"" << std::endl;
     Point p1{1,1};
     Point p2{2,2};
     Point p3{3,3};
@@ -76,8 +88,12 @@ void showOffMinus()
 
 }
 
+/**
+ * Shows off " & "
+ */
 void showOffAnd()
 {
+    std::cout << "Demonstrating \"a & b\"" << std::endl;
     Point p1{1,1};
     Point p2{2,2};
     Point p3{3,3};
@@ -94,8 +110,12 @@ void showOffAnd()
     std::cout << (a & b).toString() << std::endl;
 }
 
+/**
+ * Shows off " = "
+ */
 void showOffHasama()
 {
+    std::cout << "Demonstrating \"a = b\"" << std::endl;
     Point p1{1,1};
     Point p2{2,2};
     Point p3{3,3};
@@ -110,11 +130,13 @@ void showOffHasama()
     std::cout << "Set b:" << std::endl << b.toString();
     std::cout << "a = b makes a be ??????" << std::endl;
     std::cout << (a = b).toString() << std::endl;
-
 }
 
 
 
+/**
+ * shows off the operators of PointSet.
+ */
 int main()
 {
 

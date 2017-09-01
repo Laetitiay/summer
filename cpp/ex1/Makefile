@@ -16,8 +16,8 @@ PointSet.o: PointSet.h PointSet.cpp
 Point.o: Point.h Point.cpp
 	$(CC) $(CFLAGS) -c Point.cpp
 
-PointSetBinaryOperations: PointSetBinaryOperations.cpp
-	$(CC) $(cflags) PointSetBinaryOperations.cpp -o PointSetBinaryOperations
+PointSetBinaryOperations: PointSetBinaryOperations.cpp PointSet.o Point.o
+	$(CC) $(cflags) PointSet.o Point.o PointSetBinaryOperations.cpp -o PointSetBinaryOperations
 
 ConvexHull: Point.o PointSet.o ConvexHull.cpp
 	$(CC) $(cflags) Point.o PointSet.o ConvexHull.cpp -o ConvexHull
