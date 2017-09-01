@@ -167,6 +167,13 @@ std::string PointSet::toString() const {
     return ret;
 }
 
+Point* PointSet::toArray(int padding = 1)
+{
+    Point *retArray = new Point[array_size + padding];
+    std::copy(values, values + capacity, retArray + padding);
+    return retArray;
+}
+
 // private methods //
 void PointSet::increaseArraySize()
 {

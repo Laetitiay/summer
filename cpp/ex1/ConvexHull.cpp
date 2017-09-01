@@ -19,14 +19,19 @@ Point findMin(PointSet& set)
     // TODO
 }
 
-int ccw(Point &p1, Point &p2, Point &p3)
+long ccw(Point &p1, Point &p2, Point &p3)
 {
-    return 0;
+    return (p2.getX() - p1.getX()) * (p3.getY() - p1.getY()) - (p2.getY() - p1.getY()) * (p3.getX() - p1.getX());
 }
+
+bool
 
 PointSet& createConvexHull(PointSet& set)
 {
+
+    Point arr = set.toArray();
     Point min = findMin(set);
+    swap(Point[1], min);
     // TODO CREATE ARRAY AND SORT BY MIN ANGLE.
     // CAN ADD angle && distance to points
 
@@ -57,4 +62,5 @@ int main()
 {
     PointSet set = getInput();
     std::cout << set.toString();
+    // TODO: every "new" should have "delete".
 }
