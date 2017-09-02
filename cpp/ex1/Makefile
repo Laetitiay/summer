@@ -1,14 +1,14 @@
 CC=g++
 LDLIBS=-lm
-CFLAGS= -Wextra -Wall -Wvla -pthread -g -std=c++17 
+CFLAGS= -Wextra -Wall -Wvla -pthread -std=c++17 
 TARFLAGS= -cvf
-#TARARGS=README Makefile Point.h Point.cpp PointSet.h PointSet.cpp ConvexHull.cpp PointSetBinaryOperations.cpp
+TARARGS=README Makefile Point.h Point.cpp PointSet.h PointSet.cpp ConvexHull.cpp PointSetBinaryOperations.cpp
 
 all: ConvexHull PointSetBinaryOperations
 	./PointSetBinaryOperations
 
-tar: README Makefile Point.h Point.cpp PointSet.h PointSet.cpp ConvexHull.cpp PointSetBinaryOperations.cpp
-	tar $(TARFLAGS) ex1.tar README Makefile Point.h Point.cpp PointSet.h PointSet.cpp ConvexHull.cpp PointSetBinaryOperations.cpp
+tar: $(TARARGS)
+	tar $(TARFLAGS) ex1.tar $(TARARGS)
 
 PointSet.o: PointSet.h PointSet.cpp
 	$(CC) $(CFLAGS) -c PointSet.cpp
@@ -27,4 +27,4 @@ valgrind: ConvexHull
 
 # should it remove tar, and exec too?
 clean:
-	rm -f *.o *.a
+	rm -f *.o ConvexHull PointSetBinaryOperations ex1.tar

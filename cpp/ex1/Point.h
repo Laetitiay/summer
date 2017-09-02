@@ -24,13 +24,12 @@ public:
     long getY()const;
     static bool naturalCompare(Point &lhs, Point &rhs);
     //bool operator=(const Point &rhp)const;
+    double distance(const Point &rhs) const;
+
 
 private:
     long _x;
     long _y;
-
-    bool operator<(const Point &rhs) const;
-
 };
 
 
