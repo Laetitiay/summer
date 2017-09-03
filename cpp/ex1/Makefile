@@ -25,6 +25,5 @@ ConvexHull: Point.o PointSet.o ConvexHull.cpp
 valgrind: ConvexHull
 	valgrind --leak-check=full --show-possibly-lost=yes --show-reachable=yes --undef-value-errors=yes ConvexHull
 
-# should it remove tar, and exec too?
 clean:
 	rm -f *.o ConvexHull PointSetBinaryOperations ex1.tar

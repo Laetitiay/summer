@@ -1,1 +1,26 @@
-literally copied the algorithm form wikipedia 1:1
+CSE: liron
+
+# ex1
+In this exercise we made a Convex Hull of some set of points 
+and we also have the Point itself and a set of it, PointSet.
+## Point
+it has long x, long y as attributes.
+## PointSet
+It has an array of points that start at capacity 2. Every time we add
+a new thing to the set, if the capacity == the size, we double up the size
+in a multiple of two. We create a new array of that size and copy the previous 
+array into it.
+## ConvexHull
+I implemented the algorithm from Wikipedia's article with a few changes.
+I removed points with the same angle that were closer to the minimum points
+because they were irrelevnt.
+In wikipedia it says the complexity is O(n \log n) and I think that's pretty good.
+
+ ____________
+< ConvexHull >
+ ------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||

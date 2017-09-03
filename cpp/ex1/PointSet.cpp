@@ -171,15 +171,18 @@ PointSet &PointSet::operator&(const PointSet &rhs)
 }
 
 /**
- * Hasama operator. Creates a copy of the set into another set.
+ * Assignment operator. Creates a copy of the set into another set.
  * @param rhs set to copy
  * @return a new set.
  */
 PointSet PointSet::operator=(const PointSet &rhs)
 {
+    if (&rhs == this)
+    {
+        return *this;
+    }
     return PointSet(rhs);
 }
-
 
 /**
  * Creats a string representation of the PointSet in the form of (x1,y1)\n...(x_n,y_n)\n

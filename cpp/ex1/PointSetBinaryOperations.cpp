@@ -113,7 +113,7 @@ void showOffAnd()
 /**
  * Shows off " = "
  */
-void showOffHasama()
+void showOffAssignment()
 {
     std::cout << "Demonstrating \"a = b\"" << std::endl;
     Point p1{1, 1};
@@ -132,7 +132,6 @@ void showOffHasama()
     std::cout << (a = b).toString() << std::endl;
 }
 
-
 /**
  * shows off the operators of PointSet.
  */
@@ -144,6 +143,6 @@ int main()
     showOffEqual();
     showOffMinus();
     showOffAnd();
-    showOffHasama();
+    showOffAssignment();
     return 0;
 }

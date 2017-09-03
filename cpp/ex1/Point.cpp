@@ -92,15 +92,3 @@ bool Point::naturalCompare(Point &lhs, Point &rhs)
     return lhs._y < rhs._y;
 }
 
-//TODO delete this
-/**
- * Calculates the distance between the two points.
- * Which is (y_1 - y_2)^2 + (x_1 - x_2)^2
- * @param rhs other point argument
- * @return the distance between the two points, but squared.
- */
-//double Point::distance(const Point &rhs) const
-//{
-//    return (pow(_y - rhs._y, 2) + pow(_x - rhs._x, 2));
-//}
-
