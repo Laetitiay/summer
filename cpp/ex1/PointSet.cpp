@@ -47,7 +47,7 @@ bool PointSet::add(const Point &p)
 
     if (array_size == capacity)
     {
-        increaseArraySize();
+        _increaseArraySize();
     }
 
     values[array_size] = p;
@@ -196,6 +196,11 @@ std::string PointSet::toString() const
     return ret;
 }
 
+/**
+ * Cerates an array from the set with padding at the beginning
+ * @param padding how many padding would you like
+ * @return a padded array of the set
+ */
 Point *PointSet::toArrayWithPadding(int padding = 1)
 {
     Point *retArray = new Point[array_size + padding];
@@ -208,10 +213,11 @@ Point *PointSet::toArrayWithPadding(int padding = 1)
 }
 
 // private methods //
+
 /**
  * Increases the size of the array of the set by a factor of ARRAY_MULTIPLYER.
  */
-void PointSet::increaseArraySize()
+void PointSet::_increaseArraySize()
 {
     Point *tempArray = new Point[capacity * ARRAY_MULTIPLYER];
     std::copy(values, values + array_size, tempArray);

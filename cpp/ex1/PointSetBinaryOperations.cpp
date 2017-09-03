@@ -8,9 +8,9 @@
 void showOffNotEqual()
 {
     std::cout << "Demonstrating \"a != b\"" << std::endl;
-    Point p1{1,1};
-    Point p2{2,2};
-    Point p3{3,3};
+    Point p1{1, 1};
+    Point p2{2, 2};
+    Point p3{3, 3};
     PointSet a{};
     PointSet b{};
     a.add(p1);
@@ -22,7 +22,7 @@ void showOffNotEqual()
     std::cout << "Set b:" << std::endl << b.toString();
     std::cout << "a != b ?????" << std::endl;
     std::string msg;
-    if( a != b)
+    if (a != b)
     {
         msg = "true!\n";
     }
@@ -39,9 +39,9 @@ void showOffNotEqual()
 void showOffEqual()
 {
     std::cout << "Demonstrating \"a == b\"" << std::endl;
-    Point p1{1,1};
-    Point p2{2,2};
-    Point p3{3,3};
+    Point p1{1, 1};
+    Point p2{2, 2};
+    Point p3{3, 3};
     PointSet a{};
     PointSet b{};
     a.add(p1);
@@ -54,7 +54,7 @@ void showOffEqual()
     std::cout << "Set b:" << std::endl << b.toString();
     std::cout << "a == b ?????" << std::endl;
     std::string msg;
-    if( a == b)
+    if (a == b)
     {
         msg = "true!\n";
     }
@@ -71,9 +71,9 @@ void showOffEqual()
 void showOffMinus()
 {
     std::cout << "Demonstrating \"a - b\"" << std::endl;
-    Point p1{1,1};
-    Point p2{2,2};
-    Point p3{3,3};
+    Point p1{1, 1};
+    Point p2{2, 2};
+    Point p3{3, 3};
     PointSet a{};
     PointSet b{};
     a.add(p1);
@@ -84,7 +84,7 @@ void showOffMinus()
     std::cout << "Set a:" << std::endl << a.toString();
     std::cout << "Set b:" << std::endl << b.toString();
     std::cout << "a \\ b ?????" << std::endl;
-    std::cout << (a-b).toString() << std::endl;
+    std::cout << (a - b).toString() << std::endl;
 
 }
 
@@ -94,9 +94,9 @@ void showOffMinus()
 void showOffAnd()
 {
     std::cout << "Demonstrating \"a & b\"" << std::endl;
-    Point p1{1,1};
-    Point p2{2,2};
-    Point p3{3,3};
+    Point p1{1, 1};
+    Point p2{2, 2};
+    Point p3{3, 3};
     PointSet a{};
     PointSet b{};
     a.add(p1);
@@ -116,9 +116,9 @@ void showOffAnd()
 void showOffHasama()
 {
     std::cout << "Demonstrating \"a = b\"" << std::endl;
-    Point p1{1,1};
-    Point p2{2,2};
-    Point p3{3,3};
+    Point p1{1, 1};
+    Point p2{2, 2};
+    Point p3{3, 3};
     PointSet a{};
     PointSet b{};
     a.add(p1);
@@ -131,7 +131,6 @@ void showOffHasama()
     std::cout << "a = b makes a be ??????" << std::endl;
     std::cout << (a = b).toString() << std::endl;
 }
-
 
 
 /**

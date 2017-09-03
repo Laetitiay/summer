@@ -1,6 +1,6 @@
 CC=g++
 LDLIBS=-lm
-CFLAGS= -Wextra -Wall -Wvla -pthread -std=c++17 
+CFLAGS= -Wextra -DNDEBUG -Wall -g -Wvla -pthread -std=c++17 
 TARFLAGS= -cvf
 TARARGS=README Makefile Point.h Point.cpp PointSet.h PointSet.cpp ConvexHull.cpp PointSetBinaryOperations.cpp
 
@@ -17,10 +17,10 @@ Point.o: Point.h Point.cpp
 	$(CC) $(CFLAGS) -c Point.cpp
 
 PointSetBinaryOperations: PointSetBinaryOperations.cpp PointSet.o Point.o
-	$(CC) $(cflags) PointSet.o Point.o PointSetBinaryOperations.cpp -o PointSetBinaryOperations
+	$(CC) $(CFLAGS) PointSet.o Point.o PointSetBinaryOperations.cpp -o PointSetBinaryOperations
 
 ConvexHull: Point.o PointSet.o ConvexHull.cpp
-	$(CC) $(cflags) Point.o PointSet.o ConvexHull.cpp -o ConvexHull
+	$(CC) $(CFLAGS) Point.o PointSet.o ConvexHull.cpp -o ConvexHull
 
 valgrind: ConvexHull
 	valgrind --leak-check=full --show-possibly-lost=yes --show-reachable=yes --undef-value-errors=yes ConvexHull

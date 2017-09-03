@@ -10,7 +10,7 @@
  */
 Point::Point(long int x, long int y)
 {
-    set(x,y);
+    set(x, y);
 }
 
 /**
@@ -28,7 +28,8 @@ void Point::set(long x, long y)
  * Gets the x cord of a point
  * @return x cord of a point
  */
-long Point::getX()const{
+long Point::getX() const
+{
     return _x;
 }
 
@@ -36,7 +37,8 @@ long Point::getX()const{
  * Gets the y cord of a point
  * @return y cord of a point
  */
-long Point::getY()const {
+long Point::getY() const
+{
     return _y;
 }
 
@@ -45,7 +47,7 @@ long Point::getY()const {
  * (x,y)
  * @return a string representing the point
  */
-std::string Point::toString()const
+std::string Point::toString() const
 {
     return "(" + std::to_string(_x) + "," + std::to_string(_y) + ")";
 }
@@ -55,7 +57,7 @@ std::string Point::toString()const
  * @param rhs other point to compare
  * @return true iff both cords are the same.
  */
-bool Point::operator==(const Point &rhs)const
+bool Point::operator==(const Point &rhs) const
 {
     return _x == rhs._x && _y == rhs._y;
 }
@@ -65,7 +67,8 @@ bool Point::operator==(const Point &rhs)const
  * @param rhs other point to compare
  * @return false iff both cords are the same.
  */
-bool Point::operator!=(const Point &rhs) const {
+bool Point::operator!=(const Point &rhs) const
+{
     return !(operator==(rhs));
 }
 
@@ -78,25 +81,26 @@ bool Point::operator!=(const Point &rhs) const {
  */
 bool Point::naturalCompare(Point &lhs, Point &rhs)
 {
-    if(lhs._x < rhs._x)
+    if (lhs._x < rhs._x)
     {
         return true;
     }
-    if(lhs._x > rhs._x)
+    if (lhs._x > rhs._x)
     {
         return false;
     }
     return lhs._y < rhs._y;
 }
 
+//TODO delete this
 /**
  * Calculates the distance between the two points.
  * Which is (y_1 - y_2)^2 + (x_1 - x_2)^2
  * @param rhs other point argument
  * @return the distance between the two points, but squared.
  */
-double Point::distance(const Point &rhs)const
-{
-    return (pow(_y - rhs._y, 2) + pow(_x - rhs._x, 2));
-}
+//double Point::distance(const Point &rhs) const
+//{
+//    return (pow(_y - rhs._y, 2) + pow(_x - rhs._x, 2));
+//}
 

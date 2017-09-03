@@ -4,6 +4,8 @@
 #include "Point.h"
 #include "PointSet.h"
 
+#define MIN_CONVEX_HULL_SIZE 2
+
 static Point minPoint; // minimum point in the convex.
 
 /**
@@ -40,7 +42,7 @@ void swapPoints(Point *a, Point *b)
  * @param size
  * @return
  */
-Point* findMin(Point* arr, int size)
+Point* findMin(Point* arr, const int size)
 {
     Point* min = &arr[1];
     for (int i = 2; i <= size; ++i)
@@ -57,9 +59,13 @@ Point* findMin(Point* arr, int size)
     return min;
 }
 
-
-long ccw(Point &p1, Point &p2, Point &p3)
-{
+/**
+ * Three points are a counter-clockwise turn if ccw > 0, clockwise if
+ * ccw < 0, and collinear if ccw = 0 because ccw is a determinant that
+ * gives twice the signed  area of the triangle formed by p1, p2 and p3.
+ */
+long ccw(const Point &p1,const  Point &p2,const  Point &p3)
+ {
     return (p2.getX() - p1.getX()) * (p3.getY() - p1.getY()) - (p2.getY() - p1.getY()) * (p3.getX() - p1.getX());
 }
 
@@ -70,13 +76,28 @@ double angle(Point &p)
     long deltaX = minPoint.getX() - p.getX();
     long deltaY = minPoint.getY() - p.getY();
     return atan2(deltaY, deltaX);
+
 }
 
 bool angleCompare(Point &p1, Point &p2)
 {
-    if (angle(p1) == angle(p2))
+    long deltaX1 = minPoint.getX() - p1.getX();
+    long deltaX2 = minPoint.getX() - p2.getX();
+    long deltaY1 = minPoint.getY() - p1.getY();
+    long deltaY2 = minPoint.getY() - p2.getY();
+
+    if ((deltaY1 == 0) && (deltaY2 == 0))
     {
-        return minPoint.distance(p1) < minPoint.distance(p2);
+        return p1.getX() < p2.getX();
+    }
+
+    if ((deltaY1 == 0) || (deltaY2 == 0))
+    {
+        return deltaY1 == 0;
+    }
+    if ((deltaX1 == 0) && (deltaX2 == 0))
+    {
+        return p1.getY() < p2.getY();
     }
     return angle(p1) < angle(p2);
 }
@@ -134,27 +155,28 @@ PointSet* createConvexHull(PointSet& set)
 {
 
     int size = set.size();
-    if (size <= 2)
+    if (size <= MIN_CONVEX_HULL_SIZE)
     {
         return &set;
     }
     Point* points = set.toArrayWithPadding(1);
     swapPoints(&points[1], findMin(points, size));
     minPoint = points[1];
-    if(size > 2)
+    if(size > MIN_CONVEX_HULL_SIZE)
     {
         std::sort(points + 2, points + size + 1, angleCompare);
     }
     points[0] = points[size];
     size = removeDuplicateAngles(points, size);
-    if(size <= 2)
+    if(size <= MIN_CONVEX_HULL_SIZE)
     {
         return createSetFromArray(points, size);
     }
+    /* algorithm from wikipedia */
     int m = 1;
-    for (int i = 2 ; i <= size ; ++i)
+    for (int i = 2; i <= size ; ++i)
     {
-        while(ccw (points[m-1], points[m], points[i]) < 0)
+        while(ccw (points[m-1], points[m], points[i]) <= 0)
         {
             if (m > 1)
             {
