@@ -15,6 +15,7 @@ class Point
 
 public:
 
+friend static double threePointsCalc(Point p1, Point p2, Point p3);
 
 /**
  * creates a new point

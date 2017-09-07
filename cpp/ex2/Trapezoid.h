@@ -6,8 +6,15 @@
 #define EX2_TRAPEZOID_H
 
 
-class Trapezoid
+#include "Shape.h"
+#include "Triangle.h"
+#include <cmath>
+
+class Trapezoid : Shape
 {
+    Trapezoid(std::vector<Point> points);
+    bool isValid();
+    double calculateArea() const;
 
 };
 

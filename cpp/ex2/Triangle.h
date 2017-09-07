@@ -6,9 +6,17 @@
 #define EX2_TRIANGLE_H
 
 
-class Triangle
-{
+#include "Shape.h"
+#include <vector>
 
+#define SHAPE_NAME "Triangle"
+
+class Triangle : public Shape
+{
+public:
+    Triangle(std::vector<Point> points);
+    bool isValid();
+    double calculateArea() const;
 };
 
 

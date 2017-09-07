@@ -10,10 +10,21 @@
 
 class Shape
 {
-public:
 
-private:
+public:
+    Shape(std::vector<Point> points);
+    static double threePointsCalc(Point p1, Point p2, Point p3);
+    bool contains(const Shape&) const;
+    bool hasIntersection(const Shape&) const;
+    int size();
+    virtual bool isValid() const = 0;
+    virtual double calculateArea() const = 0;
+
+
+protected:
     std::vector<Point> points;
+    const std::string data_member;
+private:
 
 };
 

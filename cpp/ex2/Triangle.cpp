@@ -3,3 +3,20 @@
 //
 
 #include "Triangle.h"
+#include <cmath>
+
+Triangle::Triangle(std::vector<Point> points) : Shape(points)
+{
+
+}
+
+bool Triangle::isValid()
+{
+    return !Shape::threePointsCalc(points[0], points[1], points[2]) < EPSILON;
+}
+
+double Triangle::calculateArea() const
+{
+    return std::abs(Shape::threePointsCalc(points[0], points[1], points[2]));
+}
+
