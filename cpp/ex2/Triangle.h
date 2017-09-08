@@ -15,8 +15,8 @@ class Triangle : public Shape
 {
 public:
     Triangle(std::vector<Point> points);
-    bool isValid();
-    double calculateArea() const;
+    bool isValid() override;
+    double calculateArea()override;
 };
 
 

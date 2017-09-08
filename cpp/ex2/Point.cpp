@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "Point.h"
 #include <math.h>
+#include "Defs.h"
 
 /**
  * creates a new point
@@ -8,7 +9,7 @@
  * @param y y cord
  * @return a new points of (x,y)
  */
-Point::Point(CordType int x, CordType int y)
+Point::Point(CordType x, CordType y)
 {
     set(x, y);
 }

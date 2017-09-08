@@ -10,12 +10,16 @@
 #include "Triangle.h"
 #include <cmath>
 
-class Trapezoid : Shape
+class Trapezoid : public Shape
 {
-    Trapezoid(std::vector<Point> points);
     bool isValid();
-    double calculateArea() const;
+    double calculateArea() ;
 
+public:
+    Trapezoid(std::vector<Point> points);
+private:
+    bool isParallelToXAxis()const;
+    bool isNotHourglass()const;
 };
 
 

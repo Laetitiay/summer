@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <memory>
 #include "Defs.h"
 #include "Point.h"
 #include "Shape.h"
@@ -13,10 +14,33 @@
 
 int main(int argc, char** argv)
 {
+
+
+
+
+
+
+
+//    std::vector<std::shared_ptr<Shape>> sha;
+//    sha.push_back(std::shared_ptr<Trapezoid>{});
     if (argc != EXPECTED_NUM_ARGS)
     {
 
-        std::cerr << MSG_INCORRECT_ARGC << std::endl;
+        Shape * s;
+        std::vector<Point> a;
+        a.push_back(Point{-6,5});
+        a.push_back(Point{6,-6});
+        a.push_back(Point{5,6});
+        s = new Triangle{a};
+        std::vector<Point> b;
+        Shape * t;
+        b.push_back(Point{0,0});
+        b.push_back(Point{4,0});
+        b.push_back(Point{4,4});
+        b.push_back(Point{0,4});
+        t = new Trapezoid{b};
+        std::cout << s->hasIntersection(*t);
+        //std::cerr << MSG_INCORRECT_ARGC << std::endl;
         return -1;
     }
     /*
@@ -30,7 +54,7 @@ int main(int argc, char** argv)
     CordType y;
 
     std::streambuf* originalCout = std::cout.rdbuf();
-    static std::ifstream inputFile(argv[1]);
+    std::ifstream inputFile(argv[1]);
     std::cin.rdbuf(inputFile.rdbuf());
 
     while (!std::cin.eof())
