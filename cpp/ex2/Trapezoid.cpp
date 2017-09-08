@@ -11,6 +11,13 @@ Trapezoid::Trapezoid(std::vector<Point> points) : Shape(points)
 
 bool Trapezoid::isValid()
 {
+    //3
+
+    /**
+     * 1. not hourglass: one must be true
+     * p1_x > p2_x => p4_x > p3_x
+     * p2_x > p1_x => p3_x > p4_x
+     */
     return false;
 }
 
