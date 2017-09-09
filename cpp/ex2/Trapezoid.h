@@ -12,11 +12,12 @@
 
 class Trapezoid : public Shape
 {
+public:
     bool isValid();
     double calculateArea() ;
-
-public:
+    void print();
     Trapezoid(std::vector<Point> points);
+
 private:
     bool isParallelToXAxis()const;
     bool isNotHourglass()const;

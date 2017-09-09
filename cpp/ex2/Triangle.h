@@ -17,6 +17,7 @@ public:
     Triangle(std::vector<Point> points);
     bool isValid() override;
     double calculateArea()override;
+    void print();
 };
 
 

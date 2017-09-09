@@ -21,3 +21,11 @@ double Triangle::calculateArea()
     return std::abs(Shape::threePointsCalc(points[0], points[1], points[2]));
 }
 
+void Triangle::print()
+{
+    printTriangle(points[0].getX(),points[0].getY(),
+                  points[1].getX(),points[1].getY(),
+                  points[2].getX(), points[2].getY()
+                    );
+}
+
