@@ -3,8 +3,10 @@
 
 #ifndef POINT_H
 #define POINT_H
+
 #include "Defs.h"
 #include <string>
+#define POINT_NAME "Point"
 
 /**
  *  A point class.
@@ -15,7 +17,6 @@ class Point
 
 public:
 
-//friend double threePointsCalc(Point &p1, Point &p2, Point &p3);
 
 /**
  * creates a new point
@@ -23,7 +24,7 @@ public:
  * @param y y cord
  * @return a new points of (x,y)
  */
-    Point() = default;
+    Point() : _x{0}, _y{0}, data_member{POINT_NAME} {};
 
 /**
  * sets the x,y values of a point
@@ -31,6 +32,14 @@ public:
  * @param y y cord
  */
     Point(CordType x, CordType y);
+
+
+
+/**
+ * the copy Constructor
+ * @param point the point we want to copy
+ */
+    Point(const Point &point) = default;
 
     /**
      * Deletes a point
@@ -66,6 +75,13 @@ public:
     bool operator!=(const Point &rhs) const;
 
 /**
+ * operator=
+ * @param point the point we want to copy
+ * @return the point we copy, the same parm of point.
+ */
+    Point& operator=(const Point &point) = default;
+
+/**
  * Gets the x cord of a point
  * @return x cord of a point
  */
@@ -77,18 +93,10 @@ public:
  */
     CordType getY() const;
 
-/**
- * Natural comparrison of the points. A point is smaller if it has lower x value. If the x value is the same
- * then the point with the lower value is smaller.
- * @param lhs left point
- * @param rhs right point
- * @return true iff lhs < rhs.
- */
-    static bool naturalCompare(Point &lhs, Point &rhs);
-
 private:
     CordType _x;
     CordType _y;
+    const std::string data_member;
 };
 
 

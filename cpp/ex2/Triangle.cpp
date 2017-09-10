@@ -5,7 +5,7 @@
 #include "Triangle.h"
 #include <cmath>
 
-Triangle::Triangle(std::vector<Point> points) : Shape(points)
+Triangle::Triangle(std::vector<Point> points) : Shape(points, TRIANGLE_NAME)
 {
 
 }
@@ -23,9 +23,9 @@ double Triangle::calculateArea()
 
 void Triangle::print()
 {
-    printTriangle(points[0].getX(),points[0].getY(),
-                  points[1].getX(),points[1].getY(),
+    printTriangle(points[0].getX(), points[0].getY(),
+                  points[1].getX(), points[1].getY(),
                   points[2].getX(), points[2].getY()
-                    );
+    );
 }
 

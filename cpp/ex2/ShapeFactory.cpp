@@ -12,13 +12,11 @@ Shape *ShapeFactory::createShape(char shapeType, std::vector<Point> points)
     //TODO: shared_ptr
     switch (shapeType)
     {
-        //std::shared_ptr<Shape> s;
         case TRIANGLE:
-            //s = std::shared_ptr<Triangle{points}>;
             s = new Triangle{points};
             if (s->isValid())
             {
-                return s; // TODO: this is bad. use shared ptr
+                return s;
             }
             delete s;
             break;

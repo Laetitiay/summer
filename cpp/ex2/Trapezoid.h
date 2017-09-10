@@ -9,18 +9,23 @@
 #include "Shape.h"
 #include "Triangle.h"
 #include <cmath>
+#define TRAPEZOID_NAME "Trapezoid"
 
 class Trapezoid : public Shape
 {
 public:
     bool isValid();
-    double calculateArea() ;
+
+    double calculateArea();
+
     void print();
+
     Trapezoid(std::vector<Point> points);
 
 private:
-    bool isParallelToXAxis()const;
-    bool isNotHourglass()const;
+    bool isParallelToXAxis() const;
+
+    bool isNotHourglass() const;
 };
 
 

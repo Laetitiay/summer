@@ -20,7 +20,7 @@ class ShapeFactory
 {
 
 public:
-    static Shape* createShape(char shapeType, std::vector<Point> points);
+    static Shape *createShape(char shapeType, std::vector<Point> points);
 };
 
 

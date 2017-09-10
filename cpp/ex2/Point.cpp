@@ -9,7 +9,7 @@
  * @param y y cord
  * @return a new points of (x,y)
  */
-Point::Point(CordType x, CordType y)
+Point::Point(CordType x, CordType y) : data_member{POINT_NAME}
 {
     set(x, y);
 }
@@ -24,6 +24,7 @@ void Point::set(CordType x, CordType y)
     _x = x;
     _y = y;
 }
+
 
 /**
  * Gets the x cord of a point
@@ -71,25 +72,5 @@ bool Point::operator==(const Point &rhs) const
 bool Point::operator!=(const Point &rhs) const
 {
     return !(operator==(rhs));
-}
-
-/**
- * Natural comparrison of the points. A point is smaller if it has lower x value. If the x value is the same
- * then the point with the lower value is smaller.
- * @param lhs left point
- * @param rhs right point
- * @return true iff lhs < rhs.
- */
-bool Point::naturalCompare(Point &lhs, Point &rhs)
-{
-    if (lhs._x < rhs._x)
-    {
-        return true;
-    }
-    if (lhs._x > rhs._x)
-    {
-        return false;
-    }
-    return lhs._y < rhs._y;
 }
 

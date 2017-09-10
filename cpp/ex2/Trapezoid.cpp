@@ -1,11 +1,7 @@
-//
-// Created by liron on 9/5/17.
-//
-
 #include "Trapezoid.h"
 
 
-Trapezoid::Trapezoid(std::vector<Point> points) : Shape(points)
+Trapezoid::Trapezoid(std::vector<Point> points) : Shape(points, TRAPEZOID_NAME)
 {
 }
 
@@ -29,9 +25,9 @@ double Trapezoid::calculateArea()
  * p1_x > p2_x => p4_x > p3_x
  * p2_x > p1_x => p3_x > p4_x
  */
-bool Trapezoid::isNotHourglass()const
+bool Trapezoid::isNotHourglass() const
 {
-    if ((points[0].getX() > points[2].getX() && points[3].getX() > points[2].getX()) )
+    if ((points[0].getX() > points[2].getX() && points[3].getX() > points[2].getX()))
     {
         return true;
     }
@@ -42,16 +38,16 @@ bool Trapezoid::isNotHourglass()const
  * Parralel to x-axis
  * iff
  */
-bool Trapezoid::isParallelToXAxis()const
+bool Trapezoid::isParallelToXAxis() const
 {
     return !(points[0].getY() != points[1].getY() || points[2].getY() != points[3].getY());
 }
 
 void Trapezoid::print()
 {
-    printTrapezoid(points[0].getX(),points[0].getY(),
-                  points[1].getX(),points[1].getY(),
-                  points[2].getX(), points[2].getY(),
-                    points[3].getX(), points[3].getY()
+    printTrapezoid(points[0].getX(), points[0].getY(),
+                   points[1].getX(), points[1].getY(),
+                   points[2].getX(), points[2].getY(),
+                   points[3].getX(), points[3].getY()
     );
 }

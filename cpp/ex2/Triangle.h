@@ -9,14 +9,17 @@
 #include "Shape.h"
 #include <vector>
 
-#define SHAPE_NAME "Triangle"
+#define TRIANGLE_NAME "Triangle"
 
 class Triangle : public Shape
 {
 public:
     Triangle(std::vector<Point> points);
+
     bool isValid() override;
-    double calculateArea()override;
+
+    double calculateArea() override;
+
     void print();
 };
 
