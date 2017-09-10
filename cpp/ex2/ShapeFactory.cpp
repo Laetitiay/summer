@@ -6,6 +6,12 @@
 #include "ShapeFactory.h"
 
 
+/**
+ * Creates a shape of the given type and points.
+ * @param shapeType type of shape
+ * @param points points vector
+ * @return a shape if it is valid, nullptr otherwise.
+ */
 Shape *ShapeFactory::createShape(char shapeType, std::vector<Point> points)
 {
     Shape *s;
@@ -14,21 +20,18 @@ Shape *ShapeFactory::createShape(char shapeType, std::vector<Point> points)
     {
         case TRIANGLE:
             s = new Triangle{points};
-            if (s->isValid())
-            {
-                return s;
-            }
-            delete s;
             break;
         case TRAPEZOID:
             s = new Trapezoid{points};
-            if (s->isValid())
-            {
-                return s;
-            }
+            break;
         default:
             return nullptr;
     }
 
+    if (s->isValid())
+    {
+        return s;
+    }
+    delete s;
     return nullptr;
 }

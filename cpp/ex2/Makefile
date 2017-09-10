@@ -31,8 +31,8 @@ ShapeFactory.o: ShapeFactory.cpp
 Shapes: Point.o Shape.o Trapezoid.o Triangle.o Shapes.o PrintOuts.o ShapeFactory.o Defs.h
 	$(CC) -g Point.o Shape.o Trapezoid.o Triangle.o Shapes.o PrintOuts.o ShapeFactory.o -o Shapes
 
-valgrind: ConvexHull
-	valgrind --leak-check=full --show-possibly-lost=yes --show-reachable=yes --undef-value-errors=yes ConvexHull
+valgrind: Shapes
+	valgrind --leak-check=full --show-possibly-lost=yes --show-reachable=yes --undef-value-errors=yes Shapes test_examples/input5.in
 
 clean:
 	rm -f *.o Shapes ex2.tar

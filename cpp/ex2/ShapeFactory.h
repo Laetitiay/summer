@@ -1,7 +1,3 @@
-//
-// Created by liron on 9/7/17.
-//
-
 #ifndef EX2_SHAPEFACTORY_H
 #define EX2_SHAPEFACTORY_H
 
@@ -16,10 +12,19 @@
 #define TRIANGLE 'T'
 
 
+/**
+ * A factory of shapes.
+ */
 class ShapeFactory
 {
 
 public:
+    /**
+     * Creates a shape of the given type and points.
+     * @param shapeType type of shape
+     * @param points points vector
+     * @return a shape if it is valid, nullptr otherwise.
+     */
     static Shape *createShape(char shapeType, std::vector<Point> points);
 };
 

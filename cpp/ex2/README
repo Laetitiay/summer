@@ -1,0 +1,25 @@
+CSE: liron
+
+CPP, ex2
+
+
+In this exercise we read 2d shapes from a file and concluded if they are intersecting or not.
+
+# My Classes
+
+## Point
+This is a class that represnts a point in the 2d realm.
+It has the fields: _x, _y of cord_type which represents it's location and
+data_member.
+
+## Shape
+This is an abstract class that represents a general shape.
+It has a data_member field and a vector of points that belongs to the shape.
+It has general methods that all shapes share and virtual ones.
+
+### Triangle
+This is a class that derives from Shape, it represents a Triangle.
+
+### Trapezoid
+This is a class that derives from Shape, it represents a Trapezoid.
+

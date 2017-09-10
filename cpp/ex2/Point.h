@@ -24,7 +24,7 @@ public:
  * @param y y cord
  * @return a new points of (x,y)
  */
-    Point() : _x{0}, _y{0}, data_member{POINT_NAME} {};
+    Point() = default;
 
 /**
  * sets the x,y values of a point
@@ -41,9 +41,9 @@ public:
  */
     Point(const Point &point) = default;
 
-    /**
-     * Deletes a point
-     */
+/**
+ * Deletes a point
+ */
     ~Point() = default;
 
 /**
@@ -96,7 +96,7 @@ public:
 private:
     CordType _x;
     CordType _y;
-    const std::string data_member;
+    std::string data_member;
 };
 
 

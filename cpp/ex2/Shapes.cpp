@@ -16,6 +16,25 @@
 #define IO_ERROR -1
 #define PRECISION_RATE 2
 
+/**
+ * deletes the shapes vector and it's contents
+ * @param shapes vector to delete
+ */
+void cleanUpVector(std::vector<Shape *> *shapes)
+{
+    for (const auto &shape :(*shapes))
+    {
+        delete shape;
+    }
+    delete shapes;
+}
+
+/**
+ * Gets input from the given file name.
+ * If any shape is invalid, it returns nullptr.
+ * @param fileName File to read intput from
+ * @return A pointer to a vector of pointers to Shapes.
+ */
 std::vector<Shape *> *getInput(std::string fileName)
 {
     std::vector<Shape *> *shapes = new std::vector<Shape *>;
@@ -42,6 +61,7 @@ std::vector<Shape *> *getInput(std::string fileName)
         s = ShapeFactory::createShape(shapeType, points);
         if (s == nullptr)
         {
+            cleanUpVector(shapes);
             return nullptr;
         }
         shapes->push_back(s);
@@ -52,6 +72,11 @@ std::vector<Shape *> *getInput(std::string fileName)
     return shapes;
 }
 
+/**
+ * Checks if there are any intersections in the vector of points.
+ * @param shapes vector to check
+ * @return true if there are any intersections.
+ */
 bool vectorHasIntersections(std::vector<Shape *> *shapes)
 {
     for (int i = 0; i < shapes->size() - 1; ++i)
@@ -70,6 +95,11 @@ bool vectorHasIntersections(std::vector<Shape *> *shapes)
     return false;
 }
 
+/**
+ * Gets the sum of the area of all the shapes.
+ * @param shapes vector of shapes to sum.
+ * @return sum of the areas
+ */
 double getShapesArea(std::vector<Shape *> *shapes)
 {
     double sum = 0;
@@ -81,6 +111,12 @@ double getShapesArea(std::vector<Shape *> *shapes)
     return sum;
 }
 
+/**
+ * Checks if the shapes in argv[1] has an intersection and prints it to argv[2] if it exists, cout otherwise.
+ * @param argc number of args
+ * @param argv args array
+ * @return 0 if succeeded, -1 otherwise.
+ */
 int main(int argc, char *argv[])
 {
 
@@ -119,10 +155,6 @@ int main(int argc, char *argv[])
         std::cout.rdbuf(originalCout);
         outputFile.close();
     }
-
-
-    /*
-     * TODO: write to file.
-     */
+    cleanUpVector(shapes);
     return 0;
 }
