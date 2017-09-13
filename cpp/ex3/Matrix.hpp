@@ -9,6 +9,8 @@
 #include <vector>
 #include <ostream>
 #include <iostream>
+#include <thread>
+#include <future>
 
 using std::vector;
 using std::size_t;
@@ -34,28 +36,10 @@ public:
     bool operator!=(const Matrix<T> &rhs)const;
     Matrix<T> trans()const;
     bool isSquareMatrix()const;
-    friend std::ostream& operator<<(std::ostream& os, const Matrix<T> &matrix)
-    {
-        for (size_t i = 0; i < matrix._rows; ++i)
-        {
-            for (size_t j = 0; j < matrix._cols; ++j)
-            {
-                os << matrix(i,j);
-                if (j < matrix._cols - 1)
-                {
-                    os << '\t';
-                }
-            }
-            if (i < matrix._rows - 1)
-            {
-                os << '\n';
-            }
-        }
-        return os;
-    }
-
+    template <class U>
+    friend std::ostream& operator<<(std::ostream& os, const Matrix<U> &matrix);
     T& operator()(size_t row, size_t col);
-    const T operator()(size_t row, size_t col)const; // todo: is that what they mean by const?
+    const T& operator()(size_t row, size_t col)const; // todo: is that what they mean by const?
     matrixIterator begin()const // TODO: which type?
     {
         return _matrix.cbegin();
@@ -204,7 +188,7 @@ T& Matrix<T>::operator()(size_t row, size_t col)
 }
 
 template <typename T>
-const T Matrix<T>::operator()(size_t row, size_t col) const
+const T& Matrix<T>::operator()(size_t row, size_t col) const
 {
     if (row > _rows || col > _cols)
     {
@@ -262,7 +246,29 @@ Matrix<T> Matrix<T>::nonParallelMultiplyOperator(const Matrix<T> &rhs)const
 template <typename T>
 Matrix<T> Matrix<T>::parallelPlusOperator(const Matrix<T> &rhs)const
 {
-    return Matrix();
+    if (_cols != rhs._cols || _rows != rhs._rows)
+    {
+        throw;
+        // TODO: make exception
+    }
+    Matrix ret{*this};
+    vector<std::future<void>> results;
+    for (size_t i = 0; i < _rows; ++i)
+    {
+        for (size_t j = 0; j < _cols; ++j)
+        {
+            results.push_back(
+                    std::async(
+                            [&ret, &rhs, i, j](){ret(i,j) += rhs(i,j);}
+                    )
+            );
+        }
+    }
+    for (const auto& res: results)
+    {
+        res.wait();
+    }
+    return ret;
 }
 
 template <typename T>
@@ -304,26 +310,20 @@ Matrix<T> Matrix<T>::trans() const
     return ret;
 }
 
-template <typename T>
-std::ostream& operator<<(std::ostream &os, const Matrix<T> &matrix)
+template <class T>
+std::ostream& operator<<(std::ostream& os, const Matrix<T> &matrix)
 {
     for (size_t i = 0; i < matrix._rows; ++i)
     {
         for (size_t j = 0; j < matrix._cols; ++j)
         {
-            os << matrix(i,j);
-            if (j < matrix._cols - 1)
-            {
-                os << '\t';
-            }
+            os << matrix(i,j) << '\t';
         }
-        if (i < matrix._rows - 1)
-        {
-            os << '\n';
-        }
+        os << std::endl;
     }
     return os;
 }
+
 
 
 #endif //EX3_MATRIX_HPP
@@ -335,8 +335,7 @@ int main()
     vector<int> d{1,2,3,4};
     Matrix<int> c{3,4,a};
     Matrix<int> e{2,2,d};
-//    std::cout << c << std::endl;
-//    std::cout << c.trans();
-    std::cout << (e*e) << std::endl;
+    Matrix<int>::setParallel(true);
+    std::cout << (e+e) << std::endl;
 
 }
