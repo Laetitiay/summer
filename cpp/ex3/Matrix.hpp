@@ -4,6 +4,9 @@
 
 #ifndef EX3_MATRIX_HPP
 #define EX3_MATRIX_HPP
+#define EXCEPTION_INVALID_ARGS "Invalid arguments"
+#define EXCEPTION_OUT_OF_MATRIX "Out of matrix range"
+#define MATRIX_DELIMETER '\t'
 
 
 #include <vector>
@@ -53,10 +56,10 @@ public:
     template<class U>
     friend std::ostream &operator<<(std::ostream &os, const Matrix<U> &matrix);
 
-    T &operator()(size_t row, size_t col);
+    T &operator()(const size_t row, const size_t col);
 
-    const T &operator()(size_t row, size_t col) const; // todo: is that what they mean by const?
-    matrixIterator begin() const // TODO: which type?
+    T const &operator()(const size_t row, const size_t col) const;
+    matrixIterator begin() const
     {
         return _matrix.cbegin();
     }
@@ -79,6 +82,8 @@ private:
     size_t _cols;
     static bool _parallel;
 
+    void waitResults(vector<std::future<void>> results) const;
+
     Matrix<T> parallelPlusOperator(const Matrix<T> &rhs) const;
 
     Matrix<T> nonParallelPlusOperator(const Matrix<T> &rhs) const;
@@ -99,10 +104,9 @@ Matrix<T>::Matrix() : _matrix{T{0}}, _rows{1}, _cols{1}
 template<typename T>
 Matrix<T>::Matrix(size_t rows, size_t cols) : _rows{rows}, _cols{cols}, _matrix(rows * cols)
 {
-    //TODO: Is it needed?
-    for (size_t i = 0; i < rows * cols; ++i)
+    if (rows == 0 || cols == 0)
     {
-        _matrix[i] = T{0};
+        throw std::invalid_argument(EXCEPTION_INVALID_ARGS);
     }
 }
 
@@ -111,8 +115,7 @@ Matrix<T>::Matrix(size_t rows, size_t cols, const vector<T> &cells) : _matrix{ce
 {
     if (cells.size() != rows * cols)
     {
-        // TODO: better exception
-        throw;
+        throw std::invalid_argument(EXCEPTION_INVALID_ARGS);
     }
 }
 
@@ -182,7 +185,7 @@ void Matrix<T>::setParallel(bool val)
         return;
     }
     _parallel = val;
-    std::cout << "Generic Matrix mode changed to " << (val ? "parallel" : "non-parallel") << " mode.\n";
+    std::cout << "Generic Matrix mode changed to " << (val ? "parallel" : "non-parallel") << " mode." << std::endl;
     // TODO: define
 }
 
@@ -199,29 +202,50 @@ Matrix<T> Matrix<T>::operator+(const Matrix<T> &rhs) const
 template<typename T>
 Matrix<T> Matrix<T>::operator*(const Matrix<T> &rhs) const
 {
-    if (_parallel)
+    if (_cols != rhs._rows)
     {
-        return parallelMultiplyOperator(rhs);
+        throw;
+        //TODO: create exception
     }
-    return nonParallelMultiplyOperator(rhs);
+    Matrix<T> ret(_rows, rhs._cols);
+    auto multiplyRow = [&ret, this, &rhs](size_t i)
+    {
+        for (size_t j = 0; j < rhs._cols; ++j)
+        {
+            T sum{0};
+            for (size_t k = 0; k < _cols; ++k)
+            {
+                sum += ((*this)(i, k) * rhs(k, j));
+            }
+            ret(i, j) = sum;
+        }
+    };
+    vector<std::future<void>> results;
+    for (size_t i = 0; i < _rows; ++i)
+    {
+        _parallel ? results.push_back(std::async(multiplyRow,i)) : multiplyRow(i);
+
+    }
+    waitResults(results);
+    return ret;
 }
 
 template<typename T>
 T &Matrix<T>::operator()(const size_t row, const  size_t col)
 {
-    if (row > _rows || col > _cols)
+    if (row >= _rows || col >= _cols)
     {
-        throw std::out_of_range("Out of matrix range");
+        throw std::out_of_range(EXCEPTION_OUT_OF_MATRIX);
     }
     return _matrix[row * _cols + col];
 }
 
 template<typename T>
-const T &Matrix<T>::operator()(size_t row, size_t col) const
+T const &Matrix<T>::operator()(const size_t row, const size_t col) const
 {
-    if (row > _rows || col > _cols)
+    if (row >= _rows || col >= _cols)
     {
-        throw std::out_of_range("Out of matrix range");
+        throw std::out_of_range(EXCEPTION_OUT_OF_MATRIX);
     }
     return _matrix[row * _cols + col];
 }
@@ -231,21 +255,13 @@ Matrix<T> Matrix<T>::nonParallelPlusOperator(const Matrix &rhs) const
 {
     if (_cols != rhs._cols || _rows != rhs._rows)
     {
-        throw;
-        // TODO: make exception
+        throw std::invalid_argument(EXCEPTION_INVALID_ARGS);
     }
     Matrix ret{*this};
     for (int k = 0; k < _cols * _rows; ++k)
     {
         ret._matrix[k] += rhs._matrix[k];
     }
-//    for (size_t i = 0; i < _rows; ++i)
-//    {
-//        for (size_t j = 0; j < _cols; ++j)
-//        {
-//            ret(i,j) += rhs(i,j);
-//        }
-//    }
     return ret;
 }
 
@@ -255,8 +271,7 @@ Matrix<T> Matrix<T>::nonParallelMultiplyOperator(const Matrix<T> &rhs) const
 {
     if (_cols != rhs._rows)
     {
-        throw;
-        //TODO: create exception
+        throw std::invalid_argument(EXCEPTION_INVALID_ARGS);
     }
 
     Matrix<T> ret(_rows, rhs._cols);
@@ -281,8 +296,7 @@ Matrix<T> Matrix<T>::parallelPlusOperator(const Matrix<T> &rhs) const
 {
     if (_cols != rhs._cols || _rows != rhs._rows)
     {
-        throw;
-        // TODO: make exception
+        throw std::invalid_argument(EXCEPTION_INVALID_ARGS);
     }
     Matrix ret(*this);
     auto sumRow = [&ret, &rhs](size_t i)
@@ -318,7 +332,7 @@ Matrix<T> Matrix<T>::parallelMultiplyOperator(const Matrix<T> &rhs) const
     }
 
     Matrix<T> ret(_rows, rhs._cols);
-    auto sumRow = [&ret, this, &rhs](size_t i)
+    auto multiplyRow = [&ret, this, &rhs](size_t i)
     {
         for (size_t j = 0; j < rhs._cols; ++j)
         {
@@ -335,7 +349,7 @@ Matrix<T> Matrix<T>::parallelMultiplyOperator(const Matrix<T> &rhs) const
     {
         results.push_back(
                 std::async(
-                        sumRow, i
+                        multiplyRow, i
                 )
         );
 
@@ -387,11 +401,21 @@ std::ostream &operator<<(std::ostream &os, const Matrix<T> &matrix)
     {
         for (size_t j = 0; j < matrix._cols; ++j)
         {
-            os << matrix(i, j) << '\t';
+            os << matrix(i, j) << MATRIX_DELIMETER;
         }
         os << std::endl;
     }
     return os;
+}
+
+void Matrix::waitResults(vector<std::future<void>> results)const
+{
+    if (_parallel){
+        for (const auto &res: results)
+        {
+            res.wait();
+        }
+    }
 }
 
 
