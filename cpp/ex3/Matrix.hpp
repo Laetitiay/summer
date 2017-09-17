@@ -1,7 +1,3 @@
-//
-// Created by liron on 9/11/17.
-//
-
 #ifndef EX3_MATRIX_HPP
 #define EX3_MATRIX_HPP
 #define EXCEPTION_INVALID_ARGS "Invalid arguments"
@@ -27,9 +23,9 @@ template<class T>
 class Matrix
 {
 private:
-    vector<T> _matrix;
     size_t _rows;
     size_t _cols;
+    vector<T> _matrix;
     static bool _parallel;
 
     Matrix<T> _parallelPlusOperator(const Matrix<T> &rhs) const;
@@ -37,7 +33,7 @@ private:
     Matrix<T> _nonParallelPlusOperator(const Matrix<T> &rhs) const;
 
 public:
-    typedef typename vector<T>::const_iterator matrixIterator;
+    typedef typename vector<T>::const_iterator const_iterator;
 
     /**
      * default cntr
@@ -150,7 +146,14 @@ public:
      * @param col column
      * @return the value at the (row,column) cell of the matrix
      */
-    T &operator()(const size_t row, const size_t col);
+    T &operator()(const size_t row, const size_t col)
+    {
+        if (row >= _rows || col >= _cols)
+        {
+            throw std::out_of_range(EXCEPTION_OUT_OF_MATRIX);
+        }
+        return _matrix[row * _cols + col];
+    }
 
     /**
      * returns the value at the (row,column) cell of the matrix
@@ -158,13 +161,20 @@ public:
      * @param col column
      * @return returns the value at the (row,column) cell of the matrix
      */
-    T const &operator()(const size_t row, const size_t col) const;
+    T const &operator()(const size_t row, const size_t col) const
+    {
+        if (row >= _rows || col >= _cols)
+        {
+            throw std::out_of_range(EXCEPTION_OUT_OF_MATRIX);
+        }
+        return _matrix[row * _cols + col];
+    }
 
     /**
      * Begin iterator of the matrix
      * @return begin
      */
-    matrixIterator begin() const
+    const_iterator begin() const
     {
         return _matrix.cbegin();
     }
@@ -173,7 +183,7 @@ public:
      * End iterator of the matrix
      * @return end
      */
-    matrixIterator end() const
+    const_iterator end() const
     {
         return _matrix.cend();
     }
@@ -203,7 +213,7 @@ template<typename T>
 bool Matrix<T>::_parallel = false;
 
 template<typename T>
-Matrix<T>::Matrix() : _matrix{T{0}}, _rows{1}, _cols{1}
+Matrix<T>::Matrix() : _rows{1}, _cols{1}, _matrix{T{0}}
 {}
 
 template<typename T>
@@ -216,7 +226,7 @@ Matrix<T>::Matrix(size_t rows, size_t cols) : _rows{rows}, _cols{cols}, _matrix(
 }
 
 template<typename T>
-Matrix<T>::Matrix(size_t rows, size_t cols, const vector<T> &cells) : _matrix{cells}, _rows{rows}, _cols{cols}
+Matrix<T>::Matrix(size_t rows, size_t cols, const vector<T> &cells) : _rows{rows}, _cols{cols}, _matrix{cells}
 {
     if (cells.size() != rows * cols)
     {
@@ -230,7 +240,7 @@ Matrix<T>::Matrix(const Matrix<T> &other) : _rows{other._rows}, _cols{other._col
 
 
 template<typename T>
-Matrix<T>::Matrix(Matrix<T> && other) : _matrix{std::move(other._matrix)}, _rows{other._rows}, _cols{other._cols}
+Matrix<T>::Matrix(Matrix<T> && other) : _rows{other._rows}, _cols{other._cols}, _matrix{std::move(other._matrix)}
 {}
 
 template<typename T>
@@ -256,7 +266,6 @@ bool Matrix<T>::operator==(const Matrix &rhs) const
 {
     return (_rows == rhs._rows && _cols == rhs._cols) && _matrix == rhs._matrix;
 }
-
 
 template<typename T>
 Matrix<T> Matrix<T>::operator=(const Matrix<T> &rhs)
@@ -285,7 +294,7 @@ void Matrix<T>::setParallel(bool val)
         return;
     }
     _parallel = val;
-    std::cout << "Generic Matrix mode changed to " << (val ? "parallel" : "non-parallel") << " mode." << std::endl;
+    std::cout << "Generic Matrix mode changed to " << (val ? "" : "non-") << "parallel mode." << std::endl;
 }
 
 template<typename T>
@@ -324,8 +333,8 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T> &rhs) const
     for (size_t i = 0; i < _rows; ++i)
     {
         _parallel ? results.push_back(std::async(multiplyRow, i)) : multiplyRow(i);
-
     }
+
     if (_parallel)
     {
         for (const auto &res: results)
@@ -334,26 +343,6 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T> &rhs) const
         }
     }
     return ret;
-}
-
-template<typename T>
-T &Matrix<T>::operator()(const size_t row, const size_t col)
-{
-    if (row >= _rows || col >= _cols)
-    {
-        throw std::out_of_range(EXCEPTION_OUT_OF_MATRIX);
-    }
-    return _matrix[row * _cols + col];
-}
-
-template<typename T>
-T const &Matrix<T>::operator()(const size_t row, const size_t col) const
-{
-    if (row >= _rows || col >= _cols)
-    {
-        throw std::out_of_range(EXCEPTION_OUT_OF_MATRIX);
-    }
-    return _matrix[row * _cols + col];
 }
 
 template<typename T>

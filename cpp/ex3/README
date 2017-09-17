@@ -1,0 +1,29 @@
+CSE: liron
+
+CPP, ex3
+
+All the numbers are in seconds.
+
+|----------|---------------------|------------------|
+|          |        SMALL        |       BIG        |
+|----------|---------------------|------------------|
+|Operator  |    +     |   *      |    +   |    *    |
+|----------|---------------------|------------------|
+|Parallel  |6.5508e-05|1.8109e-05|0.021092|1.25394  |
+|          |          |          |        |         |
+|----------|---------------------|------------------|
+|Non-      |6.4e-07s  |4.55e-07  |0.014229|7.76211  |
+|Parallel  |          |          |        |         |
+|----------|---------------------|------------------|
+
+# Question 1
+ - For addition, we can see that both for both sets non-parallel runs faster than parallel.
+   I guess the overhead for parallel computation is too big to be worth it for "small"
+   computations.
+ - For multipication, the non-parallel is faster on the small set but the parallel is much
+   faster on the big set. 
+
+# Question 2
+ - Addition is much faster than multipication, in both parallel, non-parallel, big and small.
+   Because addition is O(n^2) while multipication is O(n^3). Also multipication has a much better
+   chance in utilizing parallel computation.
