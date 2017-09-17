@@ -14,83 +14,188 @@
 #include <iostream>
 #include <thread>
 #include <future>
+#include "Complex.h"
 
 using std::vector;
 using std::size_t;
 
 
+/**
+ * A class that represents a matrix of type T.
+ */
 template<class T>
 class Matrix
 {
-public:
-    typedef typename vector<T>::const_iterator matrixIterator;
-
-    Matrix();
-
-    Matrix(size_t rows, size_t cols);
-
-    Matrix(const Matrix<T> &other);
-
-    Matrix(Matrix<T> &&other);
-
-    Matrix(size_t rows, size_t cols, const vector<T> &cells);
-
-    ~Matrix() = default;
-
-    Matrix<T> operator=(const Matrix<T> &rhs);
-
-    Matrix<T> operator+(const Matrix<T> &rhs) const;
-
-    Matrix<T> operator-(const Matrix<T> &rhs) const;
-
-    Matrix<T> operator*(const Matrix<T> &rhs) const;
-
-    bool operator==(const Matrix<T> &rhs) const;
-
-    bool operator!=(const Matrix<T> &rhs) const;
-
-    Matrix<T> trans() const;
-
-    bool isSquareMatrix() const;
-
-    template<class U>
-    friend std::ostream &operator<<(std::ostream &os, const Matrix<U> &matrix);
-
-    T &operator()(const size_t row, const size_t col);
-
-    T const &operator()(const size_t row, const size_t col) const;
-    matrixIterator begin() const
-    {
-        return _matrix.cbegin();
-    }
-
-    matrixIterator end() const
-    {
-        return _matrix.cend();
-    }
-
-    size_t rows() const;
-
-    size_t cols() const;
-
-    static void setParallel(bool);
-
-
 private:
     vector<T> _matrix;
     size_t _rows;
     size_t _cols;
     static bool _parallel;
 
-    void waitResults(vector<std::future<void>> results) const;
+    Matrix<T> _parallelPlusOperator(const Matrix<T> &rhs) const;
 
-    Matrix<T> parallelPlusOperator(const Matrix<T> &rhs) const;
+    Matrix<T> _nonParallelPlusOperator(const Matrix<T> &rhs) const;
 
-    Matrix<T> nonParallelPlusOperator(const Matrix<T> &rhs) const;
+public:
+    typedef typename vector<T>::const_iterator matrixIterator;
 
-    Matrix<T> parallelMultiplyOperator(const Matrix<T> &rhs) const;
+    /**
+     * default cntr
+     * @return a 1x1 matrix with value T{0}
+     */
+    Matrix();
 
-    Matrix<T> nonParallelMultiplyOperator(const Matrix<T> &rhs) const;
+    /**
+     * cntr for size matrix with 0 values
+     * @param rows number of rows
+     * @param cols number of columns
+     * @return rows * cols matrix with 0 values
+     */
+    Matrix(size_t rows, size_t cols);
+
+    /**
+     * Copy constructor
+     * @param other other matrix
+     * @return copy of the matrix
+     */
+    Matrix(const Matrix<T> &other);
+
+    /**
+     * move constructor
+     * @param other other matrix
+     * @return moved matrix
+     */
+    Matrix(Matrix<T> && other);
+
+    /**
+     * Special constructor for specific values
+     * @param rows number of rows
+     * @param cols number of columns
+     * @param cells vector of values to have in the matrix
+     * @return new matrix with the values
+     */
+    Matrix(size_t rows, size_t cols, const vector<T> &cells);
+
+    /**
+     * Default destructor
+     */
+    ~Matrix() = default;
+
+    /**
+     * = operator.
+     * @param rhs right hand side argument
+     * @return the matrix
+     */
+    Matrix<T> operator=(const Matrix<T> &rhs);
+
+    /**
+     * Plus operator
+     * @param rhs right hand side
+     * @return matrix with values added by both
+     */
+    Matrix<T> operator+(const Matrix<T> &rhs) const;
+
+    /**
+     * Minus operator
+     * @param rhs right hand side
+     * @return  A new matrix with values of the first matrix minus the values of the second matrix
+     */
+    Matrix<T> operator-(const Matrix<T> &rhs) const;
+
+    /**
+     * Multipication operator
+     * @param rhs right hand side
+     * @return a matrix of multiplied two matricies
+     */
+    Matrix<T> operator*(const Matrix<T> &rhs) const;
+
+    /**
+     * Checks if the matricies are equal
+     * @param rhs  other matrix
+     * @return true iff they are equal in size and values
+     */
+    bool operator==(const Matrix<T> &rhs) const;
+
+    /**
+     * Not equal operator
+     * @param rhs other matrix
+     * @return true iff they are not the same size or have different values
+     */
+    bool operator!=(const Matrix<T> &rhs) const;
+
+    /**
+     * creates a transposed matrix
+     * @return a transposed version of this
+     */
+    Matrix<T> trans() const;
+
+    /**
+     * Checks if the matrix is a square
+     * @return true iff the number of rows equals to the number of columns
+     */
+    bool isSquareMatrix() const;
+
+    /**
+     * Prints the matrix to ostream
+     * @param os ostream to output to
+     * @param matrix matrix to print
+     * @return the ostream
+     */
+    template<class U>
+    friend std::ostream &operator<<(std::ostream &os, const Matrix<U> &matrix);
+
+    /**
+     * returns the element at the (row,column) cell of the matrix
+     * @param row row
+     * @param col column
+     * @return the value at the (row,column) cell of the matrix
+     */
+    T &operator()(const size_t row, const size_t col);
+
+    /**
+     * returns the value at the (row,column) cell of the matrix
+     * @param row row
+     * @param col column
+     * @return returns the value at the (row,column) cell of the matrix
+     */
+    T const &operator()(const size_t row, const size_t col) const;
+
+    /**
+     * Begin iterator of the matrix
+     * @return begin
+     */
+    matrixIterator begin() const
+    {
+        return _matrix.cbegin();
+    }
+
+    /**
+     * End iterator of the matrix
+     * @return end
+     */
+    matrixIterator end() const
+    {
+        return _matrix.cend();
+    }
+
+    /**
+     * rows in the matrix
+     * @return number of rows in the matrix
+     */
+    size_t rows() const;
+
+    /**
+     * Columns in the matrix
+     * @return number of columns in the matrix
+     */
+    size_t cols() const;
+
+    /**
+     * Sets the class to parallel calculations if true, opposite if false.
+     */
+    static void setParallel(bool);
+
+
 
 };
 
@@ -119,18 +224,13 @@ Matrix<T>::Matrix(size_t rows, size_t cols, const vector<T> &cells) : _matrix{ce
     }
 }
 
-/**
- * Copy cntr
- * @param other
- * @return
- */
 template<typename T>
 Matrix<T>::Matrix(const Matrix<T> &other) : _rows{other._rows}, _cols{other._cols}, _matrix{other._matrix}
 {}
 
 
 template<typename T>
-Matrix<T>::Matrix(Matrix<T> &&other) : _matrix{std::move(other._matrix)}, _rows{other._rows}, _cols{other._cols}
+Matrix<T>::Matrix(Matrix<T> && other) : _matrix{std::move(other._matrix)}, _rows{other._rows}, _cols{other._cols}
 {}
 
 template<typename T>
@@ -186,7 +286,6 @@ void Matrix<T>::setParallel(bool val)
     }
     _parallel = val;
     std::cout << "Generic Matrix mode changed to " << (val ? "parallel" : "non-parallel") << " mode." << std::endl;
-    // TODO: define
 }
 
 template<typename T>
@@ -194,9 +293,9 @@ Matrix<T> Matrix<T>::operator+(const Matrix<T> &rhs) const
 {
     if (_parallel)
     {
-        return parallelPlusOperator(rhs);
+        return _parallelPlusOperator(rhs);
     }
-    return nonParallelPlusOperator(rhs);
+    return _nonParallelPlusOperator(rhs);
 }
 
 template<typename T>
@@ -204,9 +303,9 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T> &rhs) const
 {
     if (_cols != rhs._rows)
     {
-        throw;
-        //TODO: create exception
+        throw std::invalid_argument(EXCEPTION_INVALID_ARGS);
     }
+
     Matrix<T> ret(_rows, rhs._cols);
     auto multiplyRow = [&ret, this, &rhs](size_t i)
     {
@@ -220,18 +319,25 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T> &rhs) const
             ret(i, j) = sum;
         }
     };
+
     vector<std::future<void>> results;
     for (size_t i = 0; i < _rows; ++i)
     {
-        _parallel ? results.push_back(std::async(multiplyRow,i)) : multiplyRow(i);
+        _parallel ? results.push_back(std::async(multiplyRow, i)) : multiplyRow(i);
 
     }
-    waitResults(results);
+    if (_parallel)
+    {
+        for (const auto &res: results)
+        {
+            res.wait();
+        }
+    }
     return ret;
 }
 
 template<typename T>
-T &Matrix<T>::operator()(const size_t row, const  size_t col)
+T &Matrix<T>::operator()(const size_t row, const size_t col)
 {
     if (row >= _rows || col >= _cols)
     {
@@ -251,48 +357,22 @@ T const &Matrix<T>::operator()(const size_t row, const size_t col) const
 }
 
 template<typename T>
-Matrix<T> Matrix<T>::nonParallelPlusOperator(const Matrix &rhs) const
+Matrix<T> Matrix<T>::_nonParallelPlusOperator(const Matrix &rhs) const
 {
     if (_cols != rhs._cols || _rows != rhs._rows)
     {
         throw std::invalid_argument(EXCEPTION_INVALID_ARGS);
     }
     Matrix ret{*this};
-    for (int k = 0; k < _cols * _rows; ++k)
+    for (size_t k = 0; k < _cols * _rows; ++k)
     {
         ret._matrix[k] += rhs._matrix[k];
     }
     return ret;
 }
 
-
 template<typename T>
-Matrix<T> Matrix<T>::nonParallelMultiplyOperator(const Matrix<T> &rhs) const
-{
-    if (_cols != rhs._rows)
-    {
-        throw std::invalid_argument(EXCEPTION_INVALID_ARGS);
-    }
-
-    Matrix<T> ret(_rows, rhs._cols);
-    for (size_t i = 0; i < _rows; ++i)
-    {
-        for (size_t j = 0; j < rhs._cols; ++j)
-        {
-            T sum{0};
-            for (size_t k = 0; k < _cols; ++k)
-            {
-                sum += ((*this)(i, k) * rhs(k, j));
-            }
-            ret(i, j) = sum;
-        }
-
-    }
-    return ret;
-}
-
-template<typename T>
-Matrix<T> Matrix<T>::parallelPlusOperator(const Matrix<T> &rhs) const
+Matrix<T> Matrix<T>::_parallelPlusOperator(const Matrix<T> &rhs) const
 {
     if (_cols != rhs._cols || _rows != rhs._rows)
     {
@@ -323,51 +403,11 @@ Matrix<T> Matrix<T>::parallelPlusOperator(const Matrix<T> &rhs) const
 }
 
 template<typename T>
-Matrix<T> Matrix<T>::parallelMultiplyOperator(const Matrix<T> &rhs) const
-{
-    if (_cols != rhs._rows)
-    {
-        throw;
-        //TODO: create exception
-    }
-
-    Matrix<T> ret(_rows, rhs._cols);
-    auto multiplyRow = [&ret, this, &rhs](size_t i)
-    {
-        for (size_t j = 0; j < rhs._cols; ++j)
-        {
-            T sum{0};
-            for (size_t k = 0; k < _cols; ++k)
-            {
-                sum += ((*this)(i, k) * rhs(k, j));
-            }
-            ret(i, j) = sum;
-        }
-    };
-    vector<std::future<void>> results;
-    for (size_t i = 0; i < _rows; ++i)
-    {
-        results.push_back(
-                std::async(
-                        multiplyRow, i
-                )
-        );
-
-    }
-    for (const auto &res: results)
-    {
-        res.wait();
-    }
-    return ret;
-}
-
-template<typename T>
 Matrix<T> Matrix<T>::operator-(const Matrix &rhs) const
 {
     if (_cols != rhs._cols || _rows != rhs._rows)
     {
-        throw;
-        // TODO: make exception
+        throw std::invalid_argument(EXCEPTION_INVALID_ARGS);
     }
     Matrix ret{*this};
     for (size_t i = 0; i < _rows; ++i)
@@ -380,18 +420,33 @@ Matrix<T> Matrix<T>::operator-(const Matrix &rhs) const
     return ret;
 }
 
-template<typename T>
-Matrix<T> Matrix<T>::trans() const
+template<>
+inline Matrix<Complex> Matrix<Complex>::trans() const
 {
-    Matrix<T> ret{_cols, _rows};
+    Matrix<Complex> transposed(_cols, _rows);
     for (size_t i = 0; i < _rows; ++i)
     {
         for (size_t j = 0; j < _cols; ++j)
         {
-            ret(j, i) = (*this)(i, j);
+            transposed(j, i) = (*this)(i, j).conj();
         }
     }
-    return ret;
+    return transposed;
+}
+
+
+template<typename T>
+Matrix<T> Matrix<T>::trans() const
+{
+    Matrix<T> transposed{_cols, _rows};
+    for (size_t i = 0; i < _rows; ++i)
+    {
+        for (size_t j = 0; j < _cols; ++j)
+        {
+            transposed(j, i) = (*this)(i, j);
+        }
+    }
+    return transposed;
 }
 
 template<class T>
@@ -408,27 +463,4 @@ std::ostream &operator<<(std::ostream &os, const Matrix<T> &matrix)
     return os;
 }
 
-void Matrix::waitResults(vector<std::future<void>> results)const
-{
-    if (_parallel){
-        for (const auto &res: results)
-        {
-            res.wait();
-        }
-    }
-}
-
-
-#endif //EX3_MATRIX_HPP
-//
-//int main()
-//{
-//    vector<int> a{1,2,3,4,5,6,7,8,9,10,11,12};
-//    vector<int> b{6,-2,3,7,1,9,4,9,4};
-//    vector<int> d{1,2,3,4};
-//    Matrix<int> c{3,4,a};
-//    Matrix<int> e{2,2,d};
-//    Matrix<int>::setParallel(true);
-//    std::cout << (e*e) << std::endl;
-//
-//}
+#endif
