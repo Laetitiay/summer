@@ -138,6 +138,10 @@ io_error arenstorfRoute(char *outFile)
                 {
                     fprintf(outputFile, ", ");
                 }
+                else
+                {
+                    fprintf(outputFile, "\n");
+                }
             }
         }
     }

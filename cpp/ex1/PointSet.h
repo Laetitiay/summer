@@ -38,7 +38,7 @@ public:
  * Creats a string representation of the PointSet in the form of (x1,y1)\n...(x_n,y_n)\n
  * @return a string representation of the set.
  */
-    std::string toString() const;
+    const std::string toString() const;
 
 /**
  * Adds a point to the point set.
@@ -52,7 +52,7 @@ public:
  * @param p point to remove
  * @return true iff the point was removed from the set.
  */
-    bool remove(Point &toRemove);
+    bool remove(const Point &toRemove);
 
 /**
  * How many points are in the set.

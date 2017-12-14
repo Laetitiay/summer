@@ -61,7 +61,7 @@ bool PointSet::add(const Point &p)
  * @param p point to remove
  * @return true iff the point was removed from the set.
  */
-bool PointSet::remove(Point &p)
+bool PointSet::remove(const Point &p)
 {
     int index = member(p);
     if (index == NOT_FOUND)
@@ -188,7 +188,7 @@ PointSet PointSet::operator=(const PointSet &rhs)
  * Creats a string representation of the PointSet in the form of (x1,y1)\n...(x_n,y_n)\n
  * @return a string representation of the set.
  */
-std::string PointSet::toString() const
+const std::string PointSet::toString() const
 {
     std::sort(values, values + array_size, Point::naturalCompare);
     std::string ret = "";
